@@ -1,0 +1,15 @@
+node_modules/
+dist/
+server/data/*.db
+server/data/*.db-*
+server/uploads/
+deploy_key
+pomer/deploy_key
+pomer/deploy_key.pub
+pomer/deploy_ed25519
+pomer/deploy_ed25519.pub
+*.pem
+plink.exe
+.env
+release/
+pomer-release.zip
