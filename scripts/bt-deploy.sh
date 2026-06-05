@@ -13,8 +13,14 @@ if [ -d "$APP_DIR/.git" ]; then
 else
   tmp_dir="$(mktemp -d)"
   git clone --depth 1 --branch main "$REPO_URL" "$tmp_dir"
+  find "$APP_DIR" -mindepth 1 \
+    ! -name ".user.ini" \
+    ! -path "$APP_DIR/server/data" \
+    ! -path "$APP_DIR/server/data/*" \
+    ! -path "$APP_DIR/server/uploads" \
+    ! -path "$APP_DIR/server/uploads/*" \
+    -exec rm -rf {} +
   shopt -s dotglob
-  rm -rf "$APP_DIR"/*
   cp -a "$tmp_dir"/* "$APP_DIR"/
   rm -rf "$tmp_dir"
   cd "$APP_DIR"
