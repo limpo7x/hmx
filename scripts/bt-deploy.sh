@@ -20,8 +20,7 @@ else
     ! -path "$APP_DIR/server/uploads" \
     ! -path "$APP_DIR/server/uploads/*" \
     -exec rm -rf {} +
-  shopt -s dotglob
-  cp -a "$tmp_dir"/* "$APP_DIR"/
+  tar -C "$tmp_dir" -cf - . | tar -C "$APP_DIR" -xf -
   rm -rf "$tmp_dir"
   cd "$APP_DIR"
 fi
