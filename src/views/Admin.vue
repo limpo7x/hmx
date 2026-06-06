@@ -14,6 +14,16 @@
           <span>密码</span>
           <input v-model="loginForm.password" type="password" autocomplete="current-password" required />
         </label>
+        <label>
+          <span>验证码</span>
+          <div class="captcha-field">
+            <input v-model="loginForm.captcha" autocomplete="off" maxlength="12" required />
+            <button type="button" class="captcha-image" title="Refresh captcha" @click="refreshCaptcha">
+              <img v-if="captchaSrc" :src="captchaSrc" alt="Captcha" />
+              <span v-else>Reload</span>
+            </button>
+          </div>
+        </label>
         <button class="primary-action" type="submit">登录后台</button>
         <strong v-if="error" class="form-error">{{ error }}</strong>
       </form>
@@ -421,7 +431,9 @@ const tabs = [
 const authed = ref(false)
 const error = ref("")
 const activeTab = ref("dashboard")
-const loginForm = ref({ username: "", password: "" })
+const loginForm = ref({ username: "", password: "", captcha: "" })
+const captchaSrc = ref("")
+let captchaObjectUrl = ""
 const stats = ref({})
 const messages = ref([])
 const articles = ref([])
@@ -469,13 +481,32 @@ function barWidth(count) {
   return `${Math.max(8, Math.round((count / max) * 100))}%`
 }
 
+async function refreshCaptcha() {
+  loginForm.value.captcha = ""
+  captchaSrc.value = ""
+  if (captchaObjectUrl) URL.revokeObjectURL(captchaObjectUrl)
+  captchaObjectUrl = ""
+  try {
+    const response = await fetch(`/api/auth/captcha?t=${Date.now()}`, { credentials: "include", cache: "no-store" })
+    if (!response.ok) throw new Error("Captcha failed")
+    const blob = await response.blob()
+    captchaObjectUrl = URL.createObjectURL(blob)
+    captchaSrc.value = captchaObjectUrl
+  } catch {
+    captchaSrc.value = ""
+  }
+}
+
 async function login() {
   error.value = ""
   try {
     await api.post("/api/auth/login", loginForm.value)
     authed.value = true
+    loginForm.value.password = ""
+    loginForm.value.captcha = ""
     await loadAll()
   } catch (err) {
+    refreshCaptcha()
     error.value = err.message || "登录失败"
   }
 }
@@ -483,6 +514,7 @@ async function login() {
 async function logout() {
   await api.post("/api/auth/logout", {})
   authed.value = false
+  refreshCaptcha()
 }
 
 async function loadAll() {
@@ -652,6 +684,7 @@ onMounted(async () => {
     await loadAll()
   } catch {
     authed.value = false
+    refreshCaptcha()
   }
 })
 </script>
@@ -1235,6 +1268,31 @@ textarea:focus,
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.captcha-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 10px;
+  align-items: center;
+}
+
+.captcha-image {
+  display: grid;
+  width: 150px;
+  height: 44px;
+  overflow: hidden;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: #EFF6FF;
+  cursor: pointer;
+}
+
+.captcha-image img {
+  width: 150px;
+  height: 56px;
+  object-fit: cover;
 }
 
 .form-error {

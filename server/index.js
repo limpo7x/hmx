@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 import multer from "multer"
 import sanitizeHtml from "sanitize-html"
+import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -18,6 +19,9 @@ const isProduction = process.env.NODE_ENV === "production"
 const host = process.env.HOST || (isProduction ? "127.0.0.1" : "0.0.0.0")
 const jwtSecret = process.env.JWT_SECRET || (isProduction ? "" : "dev-secret-change-me")
 const loginAttempts = new Map()
+const captchaChallenges = new Map()
+const authCookieOptions = { httpOnly: true, sameSite: "lax", secure: isProduction }
+const captchaCookieOptions = { ...authCookieOptions, maxAge: 5 * 60 * 1000 }
 
 if (isProduction) {
   if (!jwtSecret || jwtSecret.length < 32) {
@@ -105,7 +109,56 @@ const publicCategory = (row) => ({
 })
 
 function sign(admin) {
-  return jwt.sign({ id: admin.id, username: admin.username }, jwtSecret, { expiresIn: "7d" })
+  return jwt.sign({ id: admin.id, username: admin.username }, jwtSecret, { expiresIn: "12h" })
+}
+
+function createCaptchaText() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  return Array.from({ length: 5 }, () => chars[Math.floor(Math.random() * chars.length)]).join("")
+}
+
+function escapeSvg(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[char])
+}
+
+function captchaSvg(text) {
+  const lines = Array.from({ length: 6 }, (_, index) => {
+    const y = 16 + index * 8
+    const color = index % 2 ? "#93C5FD" : "#86EFAC"
+    return `<path d="M${8 + index * 4} ${y} C 48 ${y - 18}, 86 ${y + 20}, 142 ${y - 4}" stroke="${color}" stroke-width="1.4" fill="none" opacity="0.58"/>`
+  }).join("")
+  const chars = text.split("").map((char, index) => {
+    const rotate = Math.round(Math.random() * 22 - 11)
+    return `<text x="${20 + index * 24}" y="${42 + (index % 2) * 5}" transform="rotate(${rotate} ${20 + index * 24} 42)">${escapeSvg(char)}</text>`
+  }).join("")
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="56" viewBox="0 0 150 56">
+  <rect width="150" height="56" rx="8" fill="#EFF6FF"/>
+  ${lines}
+  <g fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="2">${chars}</g>
+</svg>`
+}
+
+function pruneCaptchas() {
+  const current = Date.now()
+  for (const [id, item] of captchaChallenges) {
+    if (item.expiresAt <= current) captchaChallenges.delete(id)
+  }
+}
+
+function verifyCaptcha(req) {
+  pruneCaptchas()
+  const id = req.cookies.captcha_id
+  const input = cleanText(req.body?.captcha, 12).toUpperCase()
+  const item = id ? captchaChallenges.get(id) : null
+  if (id) captchaChallenges.delete(id)
+  return Boolean(item && item.expiresAt > Date.now() && input && input === item.answer)
 }
 
 function auth(req, res, next) {
@@ -216,9 +269,23 @@ app.post("/api/messages", (req, res) => {
   res.status(201).json({ id: result.lastInsertRowid, ok: true })
 })
 
+app.get("/api/auth/captcha", (_req, res) => {
+  pruneCaptchas()
+  const id = crypto.randomUUID()
+  const answer = createCaptchaText()
+  captchaChallenges.set(id, { answer, expiresAt: Date.now() + 5 * 60 * 1000 })
+  res.cookie("captcha_id", id, captchaCookieOptions)
+  res.type("svg").send(captchaSvg(answer))
+})
+
 app.post("/api/auth/login", rateLimitLogin, (req, res) => {
   const username = cleanText(req.body?.username, 80)
   const password = String(req.body?.password || "")
+  if (!verifyCaptcha(req)) {
+    recordLoginFailure(req)
+    res.clearCookie("captcha_id", authCookieOptions)
+    return res.status(400).json({ error: "验证码错误或已过期" })
+  }
   const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(username)
   if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
     recordLoginFailure(req)
@@ -227,12 +294,13 @@ app.post("/api/auth/login", rateLimitLogin, (req, res) => {
   clearLoginFailures(req)
   db.prepare("UPDATE admins SET last_login_at = ? WHERE id = ?").run(now(), admin.id)
   audit(admin.id, "login", "admin", admin.id)
-  res.cookie("token", sign(admin), { httpOnly: true, sameSite: "lax", secure: isProduction, maxAge: 7 * 24 * 60 * 60 * 1000 })
+  res.clearCookie("captcha_id", authCookieOptions)
+  res.cookie("token", sign(admin), authCookieOptions)
   res.json({ id: admin.id, username: admin.username })
 })
 
 app.post("/api/auth/logout", (_req, res) => {
-  res.clearCookie("token")
+  res.clearCookie("token", authCookieOptions)
   res.json({ ok: true })
 })
 
