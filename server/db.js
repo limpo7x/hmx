@@ -13,6 +13,12 @@ db.pragma("journal_mode = WAL")
 
 const now = () => new Date().toISOString()
 const json = (value) => JSON.stringify(value ?? [])
+const defaultTopicHighlights = [
+  "免费试用：新老客户可先用 1 个月智能体沙箱环境，低成本验证效果。",
+  "老客户 5 折：历史合作客户搭建任一智能体服务，可享专属折扣。",
+  "一年维护赠送：成功搭建客户赠送模型巡检、故障响应和小版本升级。",
+  "全周期交付：覆盖 LLM 部署、安全合规、业务智能体搭建与流程智能化。"
+]
 
 export function initDb() {
   db.exec(`
@@ -138,6 +144,9 @@ function migrateColumns() {
   addColumn("categories", "note", "TEXT")
   addColumn("media_assets", "note", "TEXT")
   addColumn("messages", "note", "TEXT")
+  addColumn("topics", "highlights", "TEXT")
+  db.prepare("UPDATE topics SET highlights = ? WHERE highlights IS NULL OR highlights = '' OR highlights = '[]'")
+    .run(json(defaultTopicHighlights))
 }
 
 function seedAdmin() {

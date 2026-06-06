@@ -1,32 +1,24 @@
-﻿<template>
-  <div class="page">
-    <section class="article-hero">
+<template>
+  <div class="page article-page">
+    <section class="kinetic-page-hero article-hero">
       <div class="container">
-        <span class="news-category">{{ article?.category }}</span>
-        <h1>{{ article?.title }}</h1>
-        <div class="article-meta">
-          <span>{{ article?.date }}</span>
-          <span>宏梦线</span>
-        </div>
+        <span class="page-kicker">{{ article?.category || "技术观察" }}</span>
+        <h1>{{ article?.title || "文章不存在" }}</h1>
+        <p>{{ article?.date || "" }} · 宏梦线观点库</p>
       </div>
     </section>
 
     <section class="section">
-      <div class="container article-body" v-if="article">
-        <div class="article-content">
+      <div class="container article-layout" v-if="article">
+        <article class="article-content glass-card">
           <p v-for="(paragraph, index) in formattedContent" :key="index">{{ paragraph }}</p>
-        </div>
-
-        <div class="article-nav">
-          <router-link to="/news" class="link-arrow">← 返回资讯列表</router-link>
-        </div>
+        </article>
+        <router-link to="/news" class="back-link dynamic-card">返回资讯列表</router-link>
       </div>
 
-      <div class="container" v-else>
-        <p class="not-found">文章不存在</p>
-        <div style="text-align:center;margin-top:20px">
-          <router-link to="/news" class="link-arrow">返回资讯列表</router-link>
-        </div>
+      <div class="container not-found" v-else>
+        <p>文章不存在</p>
+        <router-link to="/news" class="back-link">返回资讯列表</router-link>
       </div>
     </section>
   </div>
@@ -35,18 +27,22 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
-import { newsArticles } from "@/data/site.js"
 import { api } from "@/services/content.js"
 
 const route = useRoute()
-const article = ref(newsArticles.find(a => a.id === Number(route.params.id)))
+const fallbackArticles = [
+  { id: 1, title: "企业数字化转型的关键路径", date: "2026-01-12", category: "行业洞察", summary: "从业务流程、数据资产和系统架构三个层面，拆解数字化项目的落地重点。", content: "企业数字化并不是简单上线一套系统，而是围绕业务流程、数据资产和组织协同进行持续建设。\n\n一个可靠的数字化项目通常需要先明确业务目标，再判断哪些流程应该系统化，哪些数据需要被沉淀，哪些体验会直接影响转化和效率。\n\n宏梦线更关注可落地的技术路径：先做清楚，再做稳定，最后持续优化。" },
+  { id: 2, title: "云原生架构如何提升系统稳定性", date: "2025-12-18", category: "技术分享", summary: "通过弹性伸缩、可观测性和自动化运维，构建可持续演进的技术底座。", content: "云原生架构的价值不只在部署方式，更在于让系统具备弹性、可观测和快速恢复能力。\n\n通过容器化、自动化部署、日志监控和告警机制，团队可以更快发现问题，也能更稳地支撑业务增长。\n\n对企业来说，技术底座稳定，业务创新才有空间。" },
+  { id: 3, title: "定制软件项目如何控制交付风险", date: "2025-11-26", category: "交付实践", summary: "用阶段化目标、原型验证和持续反馈，让复杂项目更可控。", content: "定制软件项目的风险往往来自需求不清、边界变化和反馈滞后。\n\n更稳妥的方式是把项目拆成明确阶段，用原型验证关键流程，用可演示版本持续校准方向。\n\n当目标、产物和节奏都清楚时，复杂项目也可以变得可控。" }
+]
+
+const article = ref(fallbackArticles.find(a => a.id === Number(route.params.id)))
 
 const formattedContent = computed(() => {
   if (!article.value) return []
-  return String(article.value.content || "")
+  return String(article.value.content || article.value.summary || "")
     .split("\n\n")
     .filter(Boolean)
-    .map(p => p.replace(/\n/g, "\n"))
 })
 
 onMounted(async () => {
@@ -55,76 +51,54 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.article-hero {
-  padding: 140px 0 50px;
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-}
-
 .article-hero h1 {
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1.4;
-  margin: 16px 0;
-  max-width: 800px;
+  max-width: 900px;
 }
 
-.news-category {
-  display: inline-block;
-  padding: 4px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--primary);
-  background: var(--primary-light);
-  border-radius: 4px;
-}
-
-.article-meta {
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.article-body {
-  max-width: 780px;
-  margin: 0 auto;
+.article-layout {
+  max-width: 860px;
 }
 
 .article-content {
-  font-size: 16px;
-  line-height: 2;
-  color: var(--text);
+  padding: 42px;
+  border-color: #DDE5F0;
+  background: #FFFFFF;
 }
 
-.article-content :deep(p) {
+.article-content p {
   margin-bottom: 24px;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 2;
 }
 
-.article-nav {
-  margin-top: 60px;
-  padding-top: 30px;
-  border-top: 1px solid var(--border);
+.article-content p:last-child {
+  margin-bottom: 0;
 }
 
-.link-arrow {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--primary);
-}
-
-.link-arrow:hover {
-  text-decoration: underline;
+.back-link {
+  display: inline-flex;
+  margin-top: 34px;
+  padding: 13px 20px;
+  border: 1px solid #DDE5F0;
+  border-radius: 8px;
+  color: #0B63F6;
+  background: #FFFFFF;
+  font-weight: 800;
 }
 
 .not-found {
   text-align: center;
-  font-size: 18px;
   color: var(--text-secondary);
-  padding: 60px 0;
 }
 
 @media (max-width: 768px) {
-  .article-hero h1 { font-size: 26px; }
-  .article-content { font-size: 15px; }
+  .article-content {
+    padding: 26px;
+  }
+
+  .article-content p {
+    font-size: 15px;
+  }
 }
 </style>

@@ -49,8 +49,30 @@ const year = new Date().getFullYear()
 
 <style scoped>
 .footer {
-  background: var(--bg-dark);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 12%, rgba(37, 99, 235, 0.24), transparent 30%),
+    linear-gradient(135deg, #020817, var(--bg-dark));
   color: #CBD5E1;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift 28s linear infinite;
+}
+
+.footer-main,
+.footer-bottom {
+  position: relative;
+  z-index: 1;
 }
 
 .footer-main {
@@ -84,6 +106,7 @@ const year = new Date().getFullYear()
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   border-radius: 8px;
   font-size: 18px;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.34);
 }
 
 .footer-desc {
@@ -115,7 +138,7 @@ const year = new Date().getFullYear()
 }
 
 .footer-col a:hover {
-  color: var(--primary-light);
+  color: #93C5FD;
 }
 
 .footer-bottom {

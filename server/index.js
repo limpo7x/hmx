@@ -90,10 +90,18 @@ const publicTopic = (row) => ({
   imageUrl: row.image_url,
   link: row.link,
   content: row.content,
+  highlights: parseList(row.highlights),
   status: row.status,
   startsAt: row.starts_at,
   endsAt: row.ends_at,
   note: row.note || ""
+})
+const publicCategory = (row) => ({
+  id: row.id,
+  type: row.type,
+  name: row.name,
+  note: row.note || "",
+  sortOrder: row.sort_order || 0
 })
 
 function sign(admin) {
@@ -146,7 +154,7 @@ function clearLoginFailures(req) {
 app.get("/api/site", (_req, res) => {
   const site = readSetting("site")
   const categories = db.prepare("SELECT id, type, name, note, sort_order FROM categories ORDER BY type, sort_order, id").all()
-  res.json({ site, categories })
+  res.json({ site, categories: categories.map(publicCategory) })
 })
 
 app.post("/api/pv", (req, res) => {
@@ -164,6 +172,17 @@ app.get("/api/topics", (_req, res) => {
       AND (ends_at IS NULL OR ends_at = '' OR ends_at >= ?)
     ORDER BY starts_at DESC, id DESC`).all(current, current)
   res.json(rows.map(publicTopic))
+})
+
+app.get("/api/topics/:id", (req, res) => {
+  const current = now()
+  const row = db.prepare(`SELECT * FROM topics
+    WHERE id = ?
+      AND status = 'published'
+      AND (starts_at IS NULL OR starts_at = '' OR starts_at <= ?)
+      AND (ends_at IS NULL OR ends_at = '' OR ends_at >= ?)`).get(req.params.id, current, current)
+  if (!row) return res.status(404).json({ error: "Topic not found" })
+  res.json(publicTopic(row))
 })
 
 app.get("/api/articles", (req, res) => {
@@ -239,9 +258,9 @@ app.get("/api/admin/messages", auth, (_req, res) => {
 
 app.patch("/api/admin/messages/:id", auth, (req, res) => {
   const status = cleanText(req.body?.status, 40) || "pending"
-  const reply = cleanText(req.body?.reply, 2000)
+  const reply = cleanHtml(req.body?.reply)
   db.prepare("UPDATE messages SET status = ?, reply = ?, note = ?, updated_at = ? WHERE id = ?")
-    .run(status, reply, cleanText(req.body?.note, 500), now(), req.params.id)
+    .run(status, reply, cleanHtml(req.body?.note), now(), req.params.id)
   audit(req.admin.id, "update", "message", req.params.id)
   res.json({ ok: true })
 })
@@ -282,17 +301,17 @@ app.get("/api/admin/topics", auth, (_req, res) => {
 
 app.post("/api/admin/topics", auth, (req, res) => {
   const item = topicPayload(req.body)
-  const result = db.prepare(`INSERT INTO topics (title, subtitle, image_url, link, content, status, starts_at, ends_at, note, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .run(item.title, item.subtitle, item.imageUrl, item.link, item.content, item.status, item.startsAt, item.endsAt, item.note, now(), now())
+  const result = db.prepare(`INSERT INTO topics (title, subtitle, image_url, link, content, highlights, status, starts_at, ends_at, note, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(item.title, item.subtitle, item.imageUrl, item.link, item.content, json(item.highlights), item.status, item.startsAt, item.endsAt, item.note, now(), now())
   audit(req.admin.id, "create", "topic", result.lastInsertRowid)
   res.status(201).json({ id: result.lastInsertRowid })
 })
 
 app.put("/api/admin/topics/:id", auth, (req, res) => {
   const item = topicPayload(req.body)
-  db.prepare("UPDATE topics SET title = ?, subtitle = ?, image_url = ?, link = ?, content = ?, status = ?, starts_at = ?, ends_at = ?, note = ?, updated_at = ? WHERE id = ?")
-    .run(item.title, item.subtitle, item.imageUrl, item.link, item.content, item.status, item.startsAt, item.endsAt, item.note, now(), req.params.id)
+  db.prepare("UPDATE topics SET title = ?, subtitle = ?, image_url = ?, link = ?, content = ?, highlights = ?, status = ?, starts_at = ?, ends_at = ?, note = ?, updated_at = ? WHERE id = ?")
+    .run(item.title, item.subtitle, item.imageUrl, item.link, item.content, json(item.highlights), item.status, item.startsAt, item.endsAt, item.note, now(), req.params.id)
   audit(req.admin.id, "update", "topic", req.params.id)
   res.json({ ok: true })
 })
@@ -334,17 +353,27 @@ app.delete("/api/admin/cases/:id", auth, (req, res) => {
 })
 
 app.get("/api/admin/categories", auth, (_req, res) => {
-  res.json(db.prepare("SELECT * FROM categories ORDER BY type, sort_order, id").all())
+  res.json(db.prepare("SELECT * FROM categories ORDER BY type, sort_order, id").all().map(publicCategory))
 })
 
 app.post("/api/admin/categories", auth, (req, res) => {
   const type = cleanText(req.body?.type, 20)
   const name = cleanText(req.body?.name, 80)
-  if (!["article", "case"].includes(type) || !name) return res.status(400).json({ error: "分类类型或名称无效" })
+  if (!["article", "case", "topic"].includes(type) || !name) return res.status(400).json({ error: "分类类型或名称无效" })
   const result = db.prepare("INSERT OR IGNORE INTO categories (type, name, note, sort_order) VALUES (?, ?, ?, ?)")
-    .run(type, name, cleanText(req.body?.note, 500), Number(req.body?.sort_order || 0))
+    .run(type, name, cleanText(req.body?.note, 500), Number(req.body?.sortOrder ?? req.body?.sort_order ?? 0))
   audit(req.admin.id, "create", "category", result.lastInsertRowid || name)
   res.status(201).json({ ok: true })
+})
+
+app.put("/api/admin/categories/:id", auth, (req, res) => {
+  const type = cleanText(req.body?.type, 20)
+  const name = cleanText(req.body?.name, 80)
+  if (!["article", "case", "topic"].includes(type) || !name) return res.status(400).json({ error: "分类类型或名称无效" })
+  db.prepare("UPDATE categories SET type = ?, name = ?, note = ?, sort_order = ? WHERE id = ?")
+    .run(type, name, cleanText(req.body?.note, 500), Number(req.body?.sortOrder ?? req.body?.sort_order ?? 0), req.params.id)
+  audit(req.admin.id, "update", "category", req.params.id)
+  res.json({ ok: true })
 })
 
 app.delete("/api/admin/categories/:id", auth, (req, res) => {
@@ -370,7 +399,7 @@ app.put("/api/admin/site", auth, (req, res) => {
     icp: cleanText(body.icp, 80) || "陕ICP备2025060218号-1",
     icpUrl: cleanText(body.icpUrl, 200) || "https://beian.miit.gov.cn/",
     bannerImage: cleanText(body.bannerImage, 300),
-    note: cleanText(body.note, 500),
+    note: cleanHtml(body.note),
     social: body.social && typeof body.social === "object" ? body.social : current.social
   }
   writeSetting("site", next)
@@ -419,10 +448,11 @@ function topicPayload(body = {}) {
     imageUrl: cleanText(body.imageUrl || body.image_url, 500),
     link: cleanText(body.link, 500),
     content: cleanHtml(body.content),
+    highlights: toList(body.highlights),
     status: body.status === "published" ? "published" : "draft",
     startsAt: cleanText(body.startsAt || body.starts_at, 40),
     endsAt: cleanText(body.endsAt || body.ends_at, 40),
-    note: cleanText(body.note, 500)
+    note: cleanHtml(body.note)
   }
 }
 
@@ -433,12 +463,12 @@ function casePayload(body = {}) {
     title,
     client: cleanText(body.client, 160),
     industry: cleanText(body.industry, 80),
-    description: cleanText(body.desc || body.description, 1000),
+    description: cleanHtml(body.desc || body.description),
     results: toList(body.results),
     tags: toList(body.tags),
     status: body.status === "published" ? "published" : "draft",
     link: cleanText(body.link, 300),
-    note: cleanText(body.note, 500),
+    note: cleanHtml(body.note),
     published_at: cleanText(body.date || body.published_at, 20)
   }
 }

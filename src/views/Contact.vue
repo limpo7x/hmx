@@ -1,50 +1,37 @@
-﻿<template>
-  <div class="page">
-    <section class="page-hero">
-      <div class="container">
-        <h1>留言咨询</h1>
-        <p>留下您的需求，我们将在24小时内与您联系</p>
+<template>
+  <div class="page contact-page">
+    <section class="kinetic-page-hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="page-kicker">留言咨询 / Start a Project</span>
+          <h1>把你的业务目标告诉我们，24小时内给出初步路径</h1>
+          <p>无论是官网建设、系统定制、移动应用还是企业数字化升级，我们会先帮你把需求拆清楚。</p>
+        </div>
+        <div class="hero-panel">
+          <div class="metric-grid">
+            <div class="metric-chip"><strong>24h</strong><span>快速响应</span></div>
+            <div class="metric-chip"><strong>1v1</strong><span>项目咨询</span></div>
+            <div class="metric-chip"><strong>0元</strong><span>初步评估</span></div>
+            <div class="metric-chip"><strong>NDA</strong><span>信息保密</span></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section section-gray">
       <div class="container contact-layout">
-        <div class="contact-info">
+        <aside class="contact-info">
+          <span class="status-dot">咨询通道在线</span>
           <h2>联系方式</h2>
-          <p class="contact-intro">无论是项目合作还是技术咨询，我们都期待与您的交流。</p>
+          <p>我们会先了解你的目标、当前系统、预算范围和期望上线时间，再给出更清晰的建议。</p>
 
-          <div class="info-item">
-            <div class="info-icon">📞</div>
-            <div>
-              <strong>电话</strong>
-              <span>{{ site.phone }}</span>
+          <div class="info-list">
+            <div class="info-item dynamic-card" v-for="item in contactItems" :key="item.label">
+              <strong>{{ item.label }}</strong>
+              <span>{{ item.value }}</span>
             </div>
           </div>
-
-          <div class="info-item">
-            <div class="info-icon">📧</div>
-            <div>
-              <strong>邮箱</strong>
-              <span>{{ site.email }}</span>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-icon">📍</div>
-            <div>
-              <strong>地址</strong>
-              <span>{{ site.address }}</span>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-icon">🕐</div>
-            <div>
-              <strong>工作时间</strong>
-              <span>周一至周五 9:00 - 18:00</span>
-            </div>
-          </div>
-        </div>
+        </aside>
 
         <div class="contact-form-wrap">
           <ContactForm />
@@ -55,79 +42,82 @@
 </template>
 
 <script setup>
-import { computed } from "vue"
 import ContactForm from "@/components/ContactForm.vue"
-import { contentState } from "@/services/content.js"
 
-const site = computed(() => contentState.site)
+const contactItems = [
+  { label: "电话", value: "400-888-9999" },
+  { label: "邮箱", value: "contact@hongmengxian.com" },
+  { label: "地址", value: "西安市高新区科技路 88 号" },
+  { label: "工作时间", value: "周一至周五 9:00 - 18:00" }
+]
 </script>
 
 <style scoped>
-.page-hero {
-  padding: 140px 0 60px;
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-  text-align: center;
-}
-
-.page-hero h1 { font-size: 40px; font-weight: 800; margin-bottom: 12px; }
-.page-hero p { font-size: 17px; color: var(--text-secondary); }
-
 .contact-layout {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 60px;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 54px;
   align-items: start;
 }
 
-.contact-info h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
+.contact-info {
+  position: sticky;
+  top: 108px;
+  padding: 34px;
+  border: 1px solid rgba(147, 197, 253, 0.26);
+  border-radius: 8px;
+  color: #FFFFFF;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.18), transparent 32%),
+    linear-gradient(135deg, #020817, #07162D 62%, #0B3B86);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
 }
 
-.contact-intro {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 40px;
+.contact-info h2 {
+  margin: 18px 0 12px;
+  font-size: 30px;
+}
+
+.contact-info p {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.8;
+}
+
+.info-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 32px;
 }
 
 .info-item {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.info-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  background: var(--primary-light);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.info-item strong,
+.info-item span {
+  display: block;
 }
 
 .info-item strong {
-  display: block;
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 2px;
+  color: #93C5FD;
+  font-size: 13px;
 }
 
 .info-item span {
+  margin-top: 6px;
+  color: #FFFFFF;
   font-size: 15px;
-  color: var(--text);
-  font-weight: 500;
 }
 
-@media (max-width: 768px) {
-  .page-hero h1 { font-size: 30px; }
+@media (max-width: 900px) {
   .contact-layout {
     grid-template-columns: 1fr;
-    gap: 40px;
+  }
+
+  .contact-info {
+    position: static;
   }
 }
 </style>

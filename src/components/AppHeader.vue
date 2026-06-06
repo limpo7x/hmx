@@ -19,7 +19,7 @@
         </router-link>
       </nav>
 
-      <button class="menu-btn" @click="menuOpen = !menuOpen" :aria-label="menuOpen ? '关闭菜单' : '打开菜单'">
+      <button class="menu-btn" :class="{ open: menuOpen }" @click="menuOpen = !menuOpen" :aria-label="menuOpen ? '关闭菜单' : '打开菜单'">
         <span></span>
         <span></span>
         <span></span>
@@ -60,15 +60,15 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
   right: 0;
   z-index: 1000;
   height: var(--header-height);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .header.scrolled {
   border-bottom-color: var(--border);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
 .header-inner {
@@ -99,6 +99,13 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
   border-radius: 8px;
   font-size: 18px;
   font-weight: 800;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.26);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.logo:hover .logo-icon {
+  transform: translateY(-2px) rotate(-3deg);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.34);
 }
 
 .nav {
@@ -109,7 +116,7 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
 .nav-link {
   font-size: 15px;
   color: var(--text-secondary);
-  transition: color var(--transition);
+  transition: color var(--transition), transform var(--transition);
   position: relative;
   padding: 4px 0;
 }
@@ -119,6 +126,10 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
   color: var(--primary);
 }
 
+.nav-link:hover {
+  transform: translateY(-1px);
+}
+
 .nav-link::after {
   content: "";
   position: absolute;
@@ -126,7 +137,7 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--primary);
+  background: linear-gradient(90deg, var(--primary), var(--cyan));
   border-radius: 1px;
   transition: width var(--transition);
 }
