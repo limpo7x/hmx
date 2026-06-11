@@ -122,6 +122,108 @@
           </div>
         </section>
 
+        <section v-if="activeTab === 'home'" class="view-stack">
+          <form v-if="homeForm.hero" class="panel-card editor-card wide" @submit.prevent="saveHome">
+            <div class="panel-heading">
+              <div><span class="eyebrow">Homepage CMS</span><h2>首页栏目配置</h2></div>
+            </div>
+
+            <div class="cms-block">
+              <h3>Banner 主视觉</h3>
+              <div class="form-grid two">
+                <label><span>角标文案</span><input v-model="homeForm.hero.kicker" /></label>
+                <label><span>主图 URL</span><input v-model="homeForm.hero.image" /></label>
+              </div>
+              <label><span>主标题</span><input v-model="homeForm.hero.title" /></label>
+              <label><span>副标题</span><textarea v-model="homeForm.hero.subtitle" rows="3"></textarea></label>
+              <div class="form-grid two">
+                <label><span>主按钮文案</span><input v-model="homeForm.hero.primaryText" /></label>
+                <label><span>主按钮链接</span><input v-model="homeForm.hero.primaryPath" /></label>
+              </div>
+              <div class="form-grid two">
+                <label><span>次按钮文案</span><input v-model="homeForm.hero.secondaryText" /></label>
+                <label><span>次按钮链接</span><input v-model="homeForm.hero.secondaryPath" /></label>
+              </div>
+              <label><span>图片描述</span><input v-model="homeForm.hero.imageAlt" /></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>Banner 动态面板</h3>
+              <div class="form-grid two">
+                <label><span>状态文案</span><input v-model="homeForm.livePanel.status" /></label>
+              </div>
+              <label><span>指标列表</span><textarea v-model="homeForm.liveMetricsText" rows="4" placeholder="数值 | 标题&#10;98% | 需求响应 SLA"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>Banner 服务入口</h3>
+              <label><span>服务卡片</span><textarea v-model="homeForm.heroServicesText" rows="5" placeholder="序号 | 标题 | 描述 | 链接&#10;01 | AI 业务智能体 | 搭建企业专属智能助手 | /solutions"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>成果数据</h3>
+              <label><span>数据卡片</span><textarea v-model="homeForm.proofStatsText" rows="5" placeholder="数值 | 标题 | 描述&#10;500+ | 成功案例 | 覆盖多行业数字化建设"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>信任客户</h3>
+              <label><span>客户 Logo / 名称</span><textarea v-model="homeForm.logosText" rows="4" placeholder="每行一个客户名称或图片 URL"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>核心能力</h3>
+              <div class="form-grid two">
+                <label><span>角标</span><input v-model="homeForm.capability.tag" /></label>
+                <label><span>标题</span><input v-model="homeForm.capability.title" /></label>
+              </div>
+              <label><span>说明</span><textarea v-model="homeForm.capability.subtitle" rows="3"></textarea></label>
+              <label><span>能力卡片</span><textarea v-model="homeForm.capabilityItemsText" rows="6" placeholder="标签 | 标题 | 描述 | 图片URL | 链接"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>解决方案</h3>
+              <div class="form-grid two">
+                <label><span>角标</span><input v-model="homeForm.solutions.eyebrow" /></label>
+                <label><span>标题</span><input v-model="homeForm.solutions.title" /></label>
+              </div>
+              <label><span>说明</span><textarea v-model="homeForm.solutions.subtitle" rows="3"></textarea></label>
+              <label><span>方案列表</span><textarea v-model="homeForm.solutionItemsText" rows="5" placeholder="序号 | 标题 | 描述"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>客户评价</h3>
+              <div class="form-grid two">
+                <label><span>角标</span><input v-model="homeForm.testimonials.tag" /></label>
+                <label><span>标题</span><input v-model="homeForm.testimonials.title" /></label>
+              </div>
+              <label><span>说明</span><textarea v-model="homeForm.testimonials.subtitle" rows="3"></textarea></label>
+              <label><span>评价列表</span><textarea v-model="homeForm.testimonialItemsText" rows="5" placeholder="姓名 | 公司 | 评价 | 指标"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>新闻模块</h3>
+              <div class="form-grid two">
+                <label><span>角标</span><input v-model="homeForm.news.tag" /></label>
+                <label><span>标题</span><input v-model="homeForm.news.title" /></label>
+              </div>
+              <label><span>说明</span><textarea v-model="homeForm.news.subtitle" rows="3"></textarea></label>
+            </div>
+
+            <div class="cms-block">
+              <h3>底部 CTA</h3>
+              <div class="form-grid two">
+                <label><span>角标</span><input v-model="homeForm.cta.kicker" /></label>
+                <label><span>按钮文案</span><input v-model="homeForm.cta.buttonText" /></label>
+              </div>
+              <label><span>标题</span><input v-model="homeForm.cta.title" /></label>
+              <label><span>说明</span><textarea v-model="homeForm.cta.subtitle" rows="3"></textarea></label>
+              <label><span>按钮链接</span><input v-model="homeForm.cta.buttonPath" /></label>
+            </div>
+
+            <button class="primary-action">保存首页栏目</button>
+          </form>
+        </section>
+
         <section v-if="activeTab === 'topics'" class="view-stack">
           <div class="panel-heading command-heading">
             <div>
@@ -417,6 +519,7 @@ const RichTextEditor = defineComponent({
 })
 
 const tabs = [
+  { id: "home", label: "首页栏目", icon: "00" },
   { id: "dashboard", label: "数据概览", icon: "01" },
   { id: "topics", label: "专题发布", icon: "02" },
   { id: "messages", label: "留言管理", icon: "03" },
@@ -443,6 +546,7 @@ const categories = ref([])
 const media = ref([])
 const logs = ref([])
 const siteForm = ref({})
+const homeForm = ref({})
 const topicForm = ref(null)
 const articleForm = ref(null)
 const caseForm = ref(null)
@@ -470,6 +574,64 @@ function textToLines(value) {
 
 function listToText(value) {
   return Array.isArray(value) ? value.join("\n") : ""
+}
+
+function rowsToText(items, fields) {
+  return Array.isArray(items) ? items.map((item) => fields.map((field) => item?.[field] || "").join(" | ")).join("\n") : ""
+}
+
+function textToObjects(value, fields) {
+  return textToLines(value).map((line) => {
+    const parts = line.split("|").map((part) => part.trim())
+    return fields.reduce((row, field, index) => {
+      row[field] = parts[index] || ""
+      return row
+    }, {})
+  }).filter((row) => Object.values(row).some(Boolean))
+}
+
+function normalizeHomeForm(payload = {}) {
+  const home = structuredClone(payload || {})
+  home.hero = home.hero || {}
+  home.livePanel = home.livePanel || {}
+  home.heroServices = home.heroServices || []
+  home.proofStats = home.proofStats || []
+  home.logos = home.logos || { items: [] }
+  home.capability = home.capability || {}
+  home.capability.items = home.capability.items || []
+  home.solutions = home.solutions || {}
+  home.solutions.items = home.solutions.items || []
+  home.testimonials = home.testimonials || {}
+  home.testimonials.items = home.testimonials.items || []
+  home.news = home.news || {}
+  home.cta = home.cta || {}
+  home.liveMetricsText = rowsToText(home.livePanel.metrics || [], ["value", "label"])
+  home.heroServicesText = rowsToText(home.heroServices, ["mark", "title", "desc", "path"])
+  home.proofStatsText = rowsToText(home.proofStats, ["value", "label", "desc"])
+  home.logosText = listToText(home.logos.items)
+  home.capabilityItemsText = rowsToText(home.capability.items, ["tag", "title", "desc", "image", "path"])
+  home.solutionItemsText = rowsToText(home.solutions.items, ["index", "title", "desc"])
+  home.testimonialItemsText = rowsToText(home.testimonials.items, ["name", "company", "content", "metric"])
+  return home
+}
+
+function buildHomePayload(form = {}) {
+  const payload = structuredClone(form || {})
+  payload.livePanel = { ...(payload.livePanel || {}), metrics: textToObjects(payload.liveMetricsText, ["value", "label"]) }
+  payload.heroServices = textToObjects(payload.heroServicesText, ["mark", "title", "desc", "path"])
+  payload.proofStats = textToObjects(payload.proofStatsText, ["value", "label", "desc"])
+  payload.logos = { ...(payload.logos || {}), items: textToLines(payload.logosText) }
+  payload.capability = { ...(payload.capability || {}), items: textToObjects(payload.capabilityItemsText, ["tag", "title", "desc", "image", "path"]) }
+  payload.solutions = { ...(payload.solutions || {}), items: textToObjects(payload.solutionItemsText, ["index", "title", "desc"]) }
+  payload.testimonials = { ...(payload.testimonials || {}), items: textToObjects(payload.testimonialItemsText, ["name", "company", "content", "metric"]) }
+  delete payload.liveMetricsText
+  delete payload.heroServicesText
+  delete payload.proofStatsText
+  delete payload.logosText
+  delete payload.capabilityItemsText
+  delete payload.solutionItemsText
+  delete payload.testimonialItemsText
+  return payload
 }
 
 function plainText(value) {
@@ -518,8 +680,9 @@ async function logout() {
 }
 
 async function loadAll() {
-  const [site, msg, art, cs, topicList, cat, med, auditRows, statData] = await Promise.all([
+  const [site, homeData, msg, art, cs, topicList, cat, med, auditRows, statData] = await Promise.all([
     api.get("/api/admin/site"),
+    api.get("/api/admin/home"),
     api.get("/api/admin/messages"),
     api.get("/api/admin/articles"),
     api.get("/api/admin/cases"),
@@ -530,6 +693,7 @@ async function loadAll() {
     api.get("/api/admin/stats")
   ])
   siteForm.value = site || {}
+  homeForm.value = normalizeHomeForm(homeData || {})
   messages.value = msg
   articles.value = art
   cases.value = cs
@@ -658,6 +822,11 @@ async function deleteCategory(id) {
 async function saveSite() {
   await api.put("/api/admin/site", siteForm.value)
   await loadAll()
+}
+
+async function saveHome() {
+  const next = await api.put("/api/admin/home", buildHomePayload(homeForm.value))
+  homeForm.value = normalizeHomeForm(next || {})
 }
 
 function onMediaFile(event) {
@@ -1129,6 +1298,21 @@ td {
 
 .editor-card.wide {
   max-width: 960px;
+}
+
+.cms-block {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  background: #F8FAFC;
+}
+
+.cms-block h3 {
+  margin: 0;
+  color: #0F172A;
+  font-size: 16px;
 }
 
 .form-grid {

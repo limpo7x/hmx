@@ -210,6 +210,10 @@ app.get("/api/site", (_req, res) => {
   res.json({ site, categories: categories.map(publicCategory) })
 })
 
+app.get("/api/home", (_req, res) => {
+  res.json(readSetting("home") || {})
+})
+
 app.post("/api/pv", (req, res) => {
   const pvPath = cleanText(req.body?.path || "/", 300) || "/"
   db.prepare("INSERT INTO page_views (path, referrer, user_agent, ip, created_at) VALUES (?, ?, ?, ?, ?)")
@@ -452,6 +456,15 @@ app.delete("/api/admin/categories/:id", auth, (req, res) => {
 
 app.get("/api/admin/site", auth, (_req, res) => res.json(readSetting("site")))
 
+app.get("/api/admin/home", auth, (_req, res) => res.json(readSetting("home") || {}))
+
+app.put("/api/admin/home", auth, (req, res) => {
+  const next = homePayload(req.body || {})
+  writeSetting("home", next)
+  audit(req.admin.id, "update", "site_settings", "home")
+  res.json(next)
+})
+
 app.put("/api/admin/site", auth, (req, res) => {
   const current = readSetting("site") || {}
   const body = req.body || {}
@@ -504,6 +517,105 @@ function articlePayload(body = {}) {
     status: body.status === "published" ? "published" : "draft",
     note: cleanText(body.note, 500),
     published_at: cleanText(body.date || body.published_at, 20)
+  }
+}
+
+function cleanListItems(value, mapper, limit = 12) {
+  if (!Array.isArray(value)) return []
+  return value.slice(0, limit).map(mapper).filter(Boolean)
+}
+
+function homePayload(body = {}) {
+  const hero = body.hero || {}
+  const livePanel = body.livePanel || {}
+  const logos = body.logos || {}
+  const capability = body.capability || {}
+  const solutions = body.solutions || {}
+  const testimonials = body.testimonials || {}
+  const news = body.news || {}
+  const cta = body.cta || {}
+  return {
+    hero: {
+      image: cleanText(hero.image, 500),
+      imageAlt: cleanText(hero.imageAlt, 160),
+      kicker: cleanText(hero.kicker, 80),
+      title: cleanText(hero.title, 160),
+      subtitle: cleanText(hero.subtitle, 500),
+      primaryText: cleanText(hero.primaryText, 40),
+      primaryPath: cleanText(hero.primaryPath, 200),
+      secondaryText: cleanText(hero.secondaryText, 40),
+      secondaryPath: cleanText(hero.secondaryPath, 200)
+    },
+    livePanel: {
+      status: cleanText(livePanel.status, 80),
+      metrics: cleanListItems(livePanel.metrics, (item) => ({
+        value: cleanText(item?.value, 40),
+        label: cleanText(item?.label, 80)
+      }), 6)
+    },
+    heroServices: cleanListItems(body.heroServices, (item) => ({
+      mark: cleanText(item?.mark, 12),
+      title: cleanText(item?.title, 80),
+      desc: cleanText(item?.desc, 160),
+      path: cleanText(item?.path, 200)
+    }), 8),
+    proofStats: cleanListItems(body.proofStats, (item) => ({
+      value: cleanText(item?.value, 40),
+      label: cleanText(item?.label, 80),
+      desc: cleanText(item?.desc, 160)
+    }), 6),
+    logos: {
+      title: cleanText(logos.title, 80),
+      items: toList(logos.items).slice(0, 12)
+    },
+    capability: {
+      tag: cleanText(capability.tag, 80),
+      title: cleanText(capability.title, 160),
+      subtitle: cleanText(capability.subtitle, 500),
+      items: cleanListItems(capability.items, (item) => ({
+        tag: cleanText(item?.tag, 60),
+        title: cleanText(item?.title, 100),
+        desc: cleanText(item?.desc, 300),
+        image: cleanText(item?.image, 500),
+        path: cleanText(item?.path, 200)
+      }), 12)
+    },
+    solutions: {
+      eyebrow: cleanText(solutions.eyebrow, 80),
+      title: cleanText(solutions.title, 160),
+      subtitle: cleanText(solutions.subtitle, 500),
+      linkText: cleanText(solutions.linkText, 80),
+      linkPath: cleanText(solutions.linkPath, 200),
+      items: cleanListItems(solutions.items, (item) => ({
+        index: cleanText(item?.index, 12),
+        title: cleanText(item?.title, 100),
+        desc: cleanText(item?.desc, 300)
+      }), 8)
+    },
+    testimonials: {
+      tag: cleanText(testimonials.tag, 80),
+      title: cleanText(testimonials.title, 160),
+      subtitle: cleanText(testimonials.subtitle, 500),
+      items: cleanListItems(testimonials.items, (item) => ({
+        name: cleanText(item?.name, 80),
+        company: cleanText(item?.company, 120),
+        content: cleanText(item?.content, 500),
+        metric: cleanText(item?.metric, 80)
+      }), 8)
+    },
+    news: {
+      tag: cleanText(news.tag, 80),
+      title: cleanText(news.title, 160),
+      subtitle: cleanText(news.subtitle, 500),
+      linkText: cleanText(news.linkText, 80)
+    },
+    cta: {
+      kicker: cleanText(cta.kicker, 100),
+      title: cleanText(cta.title, 160),
+      subtitle: cleanText(cta.subtitle, 500),
+      buttonText: cleanText(cta.buttonText, 60),
+      buttonPath: cleanText(cta.buttonPath, 200)
+    }
   }
 }
 

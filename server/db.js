@@ -19,6 +19,89 @@ const defaultTopicHighlights = [
   "一年维护赠送：成功搭建客户赠送模型巡检、故障响应和小版本升级。",
   "全周期交付：覆盖 LLM 部署、安全合规、业务智能体搭建与流程智能化。"
 ]
+const defaultHomeContent = {
+  hero: {
+    image: "/home-redesign/hero-operations.png",
+    imageAlt: "企业级软件交付与运维场景",
+    kicker: "企业数字化交付伙伴",
+    title: "让复杂的业务更高效，用技术创造可持续价值",
+    subtitle: "宏梦线专注互联网软件研发与企业数字化转型，提供从咨询、设计、开发到云端部署和持续运维的一站式解决方案。",
+    primaryText: "免费咨询",
+    primaryPath: "/contact",
+    secondaryText: "了解能力",
+    secondaryPath: "/capabilities"
+  },
+  livePanel: {
+    status: "交付系统在线",
+    metrics: [
+      { value: "99.9%", label: "服务可用性" },
+      { value: "24h", label: "需求响应" },
+      { value: "6+", label: "核心行业" }
+    ]
+  },
+  heroServices: [
+    { mark: "01", title: "网站建设", desc: "官网 / 门户 / 电商平台", path: "/capabilities" },
+    { mark: "02", title: "移动应用", desc: "iOS / Android / 小程序", path: "/capabilities" },
+    { mark: "03", title: "企业系统", desc: "ERP / CRM / OA / 数据台", path: "/capabilities" },
+    { mark: "04", title: "云端运维", desc: "上云部署 / DevOps / 监控", path: "/capabilities" },
+    { mark: "05", title: "AI与数据", desc: "数据分析 / 智能应用", path: "/capabilities" }
+  ],
+  proofStats: [
+    { value: "200+", label: "专业团队成员", desc: "多角色协作，稳定交付保障" },
+    { value: "500+", label: "成功交付案例", desc: "覆盖多行业，经验沉淀丰富" },
+    { value: "98%", label: "客户满意度", desc: "长期合作，口碑值得信赖" }
+  ],
+  logos: { title: "他们信任宏梦线", items: ["中国中铁", "越秀集团", "广汽集团", "OPPO", "ZTE 中兴", "海大集团"] },
+  capability: {
+    tag: "核心能力",
+    title: "以业务为核心的全周期技术服务",
+    subtitle: "从早期规划到上线后的稳定运营，帮助企业构建安全、稳定、可扩展的数字化系统。",
+    items: [
+      { tag: "Strategy", title: "数字化咨询与规划", desc: "梳理业务场景与痛点，制定可落地的数字化路线图与实施策略。", image: "/home-redesign/cap-consulting.png", path: "/capabilities" },
+      { tag: "Engineering", title: "软件定制开发", desc: "高质量交付复杂业务系统、平台与应用，支持稳定增长与持续迭代。", image: "/home-redesign/cap-development.png", path: "/capabilities" },
+      { tag: "Cloud", title: "云计算与运维", desc: "提供云架构设计、迁移、DevOps 与 7x24 运维保障。", image: "/home-redesign/cap-cloud.png", path: "/capabilities" },
+      { tag: "Data", title: "AI与数据智能", desc: "构建数据中台与智能应用，释放数据价值，驱动业务智能决策。", image: "/home-redesign/cap-ai-data.png", path: "/capabilities" },
+      { tag: "Experience", title: "移动应用与全端体验", desc: "打造高性能移动应用与小程序，提升用户体验与业务触达能力。", image: "/home-redesign/cap-mobile.png", path: "/capabilities" },
+      { tag: "Security", title: "系统集成与安全", desc: "提供系统集成、接口对接与安全防护，保障企业数据与业务安全。", image: "/home-redesign/cap-security.png", path: "/capabilities" }
+    ]
+  },
+  solutions: {
+    eyebrow: "解决方案",
+    title: "深入行业场景，交付可落地的数字化方案",
+    subtitle: "围绕业务流程、用户体验、数据资产和系统稳定性，帮助不同类型组织完成从想法到上线的闭环。",
+    linkText: "查看全部方案",
+    linkPath: "/solutions",
+    items: [
+      { index: "01", title: "智慧电商", desc: "全渠道电商平台、会员营销、订单履约与数据分析一体化建设。" },
+      { index: "02", title: "智慧政务", desc: "行政审批、数据共享、便民服务平台与政务信息化系统。" },
+      { index: "03", title: "智慧教育", desc: "在线教育平台、教务管理、直播教学与数字化学习体验。" },
+      { index: "04", title: "企业数字化", desc: "办公协同、客户管理、业务中台和数据资产建设。" }
+    ]
+  },
+  testimonials: {
+    tag: "客户评价",
+    title: "用稳定交付赢得长期信任",
+    subtitle: "客户关心的不只是上线，更是系统能否持续服务业务增长。",
+    items: [
+      { name: "张总", company: "某电商平台", content: "宏梦线帮助我们完成了核心交易系统升级，上线后系统稳定性和用户体验都有明显提升。", metric: "转化率提升 30%" },
+      { name: "李经理", company: "某教育科技集团", content: "从需求沟通到项目交付，团队响应很快，也能把复杂业务拆解成清晰的技术方案。", metric: "流程效率提升 50%" },
+      { name: "王总监", company: "某金融机构", content: "数据分析平台上线后，业务团队可以实时洞察运营状态，决策效率提升非常明显。", metric: "报表周期缩短 80%" }
+    ]
+  },
+  news: {
+    tag: "新闻资讯",
+    title: "最新动态与技术观察",
+    subtitle: "关注企业数字化、云原生、数据智能和项目交付的实践经验。",
+    linkText: "查看全部文章"
+  },
+  cta: {
+    kicker: "准备开始一个可靠的数字化项目？",
+    title: "把复杂需求讲清楚，剩下的交给专业团队。",
+    subtitle: "告诉我们你的业务目标，我们会给出清晰的技术路径、周期评估和落地建议。",
+    buttonText: "立即咨询",
+    buttonPath: "/contact"
+  }
+}
 
 export function initDb() {
   db.exec(`
@@ -128,6 +211,7 @@ export function initDb() {
   seedAdmin()
   migrateColumns()
   seedSettings()
+  seedHomeContent()
   seedCategories()
   seedContent()
   seedTopics()
@@ -184,6 +268,10 @@ function seedSettings() {
     bannerImage: "",
     note: ""
   })
+}
+
+function seedHomeContent() {
+  setDefault("home", defaultHomeContent)
 }
 
 function seedCategories() {

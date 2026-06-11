@@ -22,13 +22,13 @@
       <div class="container">
         <SectionTitle tag="精选案例" title="真实场景里的系统升级与业务增长" subtitle="每个项目都围绕稳定性、效率、增长和长期运营能力展开。" center />
         <div class="case-grid">
-          <article class="case-card dynamic-card" v-for="item in cases" :key="item.id">
+          <article class="case-card dynamic-card" v-for="item in displayCases" :key="item.id">
             <div class="case-top">
               <span v-for="tag in item.tags" :key="tag">{{ tag }}</span>
             </div>
             <h3>{{ item.title }}</h3>
             <p class="case-client">{{ item.client }}</p>
-            <p class="case-desc">{{ item.desc }}</p>
+            <p class="case-desc" v-html="item.desc"></p>
             <div class="case-results">
               <strong>项目成果</strong>
               <ul>
@@ -45,7 +45,7 @@
         <SectionTitle tag="客户声音" title="长期合作来自稳定交付" subtitle="他们看重的是团队能否持续响应、持续优化，并真正理解业务。" center />
         <div class="testimonial-grid">
           <article class="testimonial-card dynamic-card" v-for="item in testimonials" :key="item.name">
-            <p>“{{ item.content }}”</p>
+            <p>"{{ item.content }}"</p>
             <div>
               <strong>{{ item.name }}</strong>
               <span>{{ item.company }}</span>
@@ -65,10 +65,14 @@
 </template>
 
 <script setup>
-const cases = [
-  { id: 1, title: "大型电商平台系统重构", client: "国内头部电商企业", tags: ["电商", "系统重构", "高并发"], desc: "将核心交易系统从单体架构升级为可扩展服务架构，支撑促销期间的高并发访问。", results: ["响应时间降低60%", "运维成本降低40%", "上线首月GMV增长25%"] },
-  { id: 2, title: "教育集团在线学习平台", client: "K12教育科技集团", tags: ["教育", "直播", "SaaS"], desc: "搭建集直播、录播、题库、教务和学情分析于一体的在线学习平台。", results: ["支持10万+学生在线学习", "直播延迟控制在3秒内", "教务效率提升50%"] },
-  { id: 3, title: "金融机构数据分析中台", client: "股份制商业银行", tags: ["金融", "大数据", "AI"], desc: "建设企业级数据分析中台，实现多源数据融合、指标分析和实时业务洞察。", results: ["数据处理效率提升80%", "报表周期从3天缩短至1小时", "支撑10+业务部门"] }
+import { computed, onMounted, ref } from "vue"
+import SectionTitle from "@/components/SectionTitle.vue"
+import { api } from "@/services/content.js"
+
+const fallbackCases = [
+  { id: "fallback-1", title: "大型电商平台系统重构", client: "国内头部电商企业", tags: ["电商", "系统重构", "高并发"], desc: "将核心交易系统从单体架构升级为可扩展服务架构，支撑促销期间的高并发访问。", results: ["响应时间降低60%", "运维成本降低40%", "上线首月GMV增长25%"] },
+  { id: "fallback-2", title: "教育集团在线学习平台", client: "K12教育科技集团", tags: ["教育", "直播", "SaaS"], desc: "搭建集直播、录播、题库、教务和学情分析于一体的在线学习平台。", results: ["支持10万学生在线学习", "直播延迟控制在3秒内", "教务效率提升50%"] },
+  { id: "fallback-3", title: "金融机构数据分析中台", client: "股份制商业银行", tags: ["金融", "大数据", "AI"], desc: "建设企业级数据分析中台，实现多源数据融合、指标分析和实时业务洞察。", results: ["数据处理效率提升80%", "报表周期从3天缩短至1小时", "支撑10+业务部门"] }
 ]
 
 const testimonials = [
@@ -76,6 +80,17 @@ const testimonials = [
   { name: "李经理", company: "某教育科技集团", content: "从需求沟通到项目交付，团队响应很快，能把复杂流程拆解成清晰的实施计划。" },
   { name: "王总监", company: "某金融机构", content: "数据平台让业务团队能实时洞察运营状态，技术实力和响应速度都让人放心。" }
 ]
+
+const cases = ref([])
+const displayCases = computed(() => cases.value.length ? cases.value : fallbackCases)
+
+onMounted(async () => {
+  try {
+    cases.value = await api.get("/api/cases")
+  } catch {
+    cases.value = []
+  }
+})
 </script>
 
 <style scoped>
@@ -127,6 +142,10 @@ const testimonials = [
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.8;
+}
+
+.case-desc :deep(p) {
+  margin: 0 0 10px;
 }
 
 .case-results {
