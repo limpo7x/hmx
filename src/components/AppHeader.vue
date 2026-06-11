@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue"
+import { computed, ref, onMounted, onUnmounted, watch } from "vue"
 import { useRoute } from "vue-router"
 import { navLinks } from "@/data/site.js"
 import { contentState } from "@/services/content.js"
@@ -49,7 +49,18 @@ function onScroll() {
 }
 
 onMounted(() => window.addEventListener("scroll", onScroll))
-onUnmounted(() => window.removeEventListener("scroll", onScroll))
+onUnmounted(() => {
+  window.removeEventListener("scroll", onScroll)
+  document.body.classList.remove("mobile-nav-open")
+})
+
+watch(menuOpen, (open) => {
+  document.body.classList.toggle("mobile-nav-open", open)
+})
+
+watch(() => route.fullPath, () => {
+  menuOpen.value = false
+})
 </script>
 
 <style scoped>
@@ -68,6 +79,12 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
 
 .header.scrolled {
   border-bottom-color: var(--border);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.header.open {
+  border-bottom-color: var(--border);
+  background: #FFFFFF;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
@@ -179,33 +196,68 @@ onUnmounted(() => window.removeEventListener("scroll", onScroll))
 }
 
 @media (max-width: 768px) {
+  :global(body.mobile-nav-open) {
+    overflow: hidden;
+  }
+
   .menu-btn {
     display: flex;
   }
 
   .nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--bg);
+    top: calc(var(--header-height) + 10px);
+    left: 16px;
+    right: 16px;
+    bottom: auto;
+    z-index: 1000;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
+    max-height: calc(100vh - var(--header-height) - 28px);
+    overflow: auto;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FFFFFF;
+    box-shadow: 0 20px 54px rgba(15, 23, 42, 0.18);
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--transition);
+    transform: translateY(-10px);
+    transition: opacity var(--transition), visibility var(--transition), transform var(--transition);
   }
 
   .nav.active {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transform: translateY(0);
   }
 
   .nav-link {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--bg-gray);
+    font-size: 16px;
+    font-weight: 800;
+    transform: none;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  }
+
+  .nav-link::after {
+    display: none;
   }
 }
 </style>
