@@ -149,25 +149,54 @@
 
             <div class="cms-block">
               <h3>Banner 动态面板</h3>
-              <div class="form-grid two">
-                <label><span>状态文案</span><input v-model="homeForm.livePanel.status" /></label>
+              <label><span>状态文案</span><input v-model="homeForm.livePanel.status" /></label>
+              <div class="cms-list">
+                <div class="cms-row compact" v-for="(item, index) in homeForm.livePanel.metrics" :key="'metric-' + index">
+                  <label><span>数值</span><input v-model="item.value" /></label>
+                  <label><span>标题</span><input v-model="item.label" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.livePanel.metrics.splice(index, 1)">删除</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.livePanel.metrics.push({ value: '', label: '' })">添加指标</button>
               </div>
-              <label><span>指标列表</span><textarea v-model="homeForm.liveMetricsText" rows="4" placeholder="数值 | 标题&#10;98% | 需求响应 SLA"></textarea></label>
             </div>
 
             <div class="cms-block">
               <h3>Banner 服务入口</h3>
-              <label><span>服务卡片</span><textarea v-model="homeForm.heroServicesText" rows="5" placeholder="序号 | 标题 | 描述 | 链接&#10;01 | AI 业务智能体 | 搭建企业专属智能助手 | /solutions"></textarea></label>
+              <div class="cms-list">
+                <div class="cms-row service" v-for="(item, index) in homeForm.heroServices" :key="'service-' + index">
+                  <label><span>序号</span><input v-model="item.mark" /></label>
+                  <label><span>标题</span><input v-model="item.title" /></label>
+                  <label><span>描述</span><input v-model="item.desc" /></label>
+                  <label><span>链接</span><input v-model="item.path" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.heroServices.splice(index, 1)">删除</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.heroServices.push({ mark: '', title: '', desc: '', path: '/capabilities' })">添加服务入口</button>
+              </div>
             </div>
 
             <div class="cms-block">
               <h3>成果数据</h3>
-              <label><span>数据卡片</span><textarea v-model="homeForm.proofStatsText" rows="5" placeholder="数值 | 标题 | 描述&#10;500+ | 成功案例 | 覆盖多行业数字化建设"></textarea></label>
+              <div class="cms-list">
+                <div class="cms-row stat" v-for="(item, index) in homeForm.proofStats" :key="'stat-' + index">
+                  <label><span>数值</span><input v-model="item.value" /></label>
+                  <label><span>标题</span><input v-model="item.label" /></label>
+                  <label><span>描述</span><input v-model="item.desc" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.proofStats.splice(index, 1)">删除</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.proofStats.push({ value: '', label: '', desc: '' })">添加数据</button>
+              </div>
             </div>
 
             <div class="cms-block">
               <h3>信任客户</h3>
-              <label><span>客户 Logo / 名称</span><textarea v-model="homeForm.logosText" rows="4" placeholder="每行一个客户名称或图片 URL"></textarea></label>
+              <label><span>栏目标题</span><input v-model="homeForm.logos.title" /></label>
+              <div class="cms-list">
+                <div class="cms-row compact" v-for="(logo, index) in homeForm.logos.items" :key="'logo-' + index">
+                  <label><span>客户名称 / Logo URL</span><input v-model="homeForm.logos.items[index]" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.logos.items.splice(index, 1)">删除</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.logos.items.push('')">添加客户</button>
+              </div>
             </div>
 
             <div class="cms-block">
@@ -177,7 +206,21 @@
                 <label><span>标题</span><input v-model="homeForm.capability.title" /></label>
               </div>
               <label><span>说明</span><textarea v-model="homeForm.capability.subtitle" rows="3"></textarea></label>
-              <label><span>能力卡片</span><textarea v-model="homeForm.capabilityItemsText" rows="6" placeholder="标签 | 标题 | 描述 | 图片URL | 链接"></textarea></label>
+              <div class="cms-list">
+                <div class="cms-card-row" v-for="(item, index) in homeForm.capability.items" :key="'capability-' + index">
+                  <div class="form-grid two">
+                    <label><span>标签</span><input v-model="item.tag" /></label>
+                    <label><span>标题</span><input v-model="item.title" /></label>
+                  </div>
+                  <label><span>描述</span><textarea v-model="item.desc" rows="3"></textarea></label>
+                  <div class="form-grid two">
+                    <label><span>图片 URL</span><input v-model="item.image" /></label>
+                    <label><span>链接</span><input v-model="item.path" /></label>
+                  </div>
+                  <button class="danger-action" type="button" @click="homeForm.capability.items.splice(index, 1)">删除能力</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.capability.items.push({ tag: '', title: '', desc: '', image: '', path: '/capabilities' })">添加能力</button>
+              </div>
             </div>
 
             <div class="cms-block">
@@ -187,7 +230,15 @@
                 <label><span>标题</span><input v-model="homeForm.solutions.title" /></label>
               </div>
               <label><span>说明</span><textarea v-model="homeForm.solutions.subtitle" rows="3"></textarea></label>
-              <label><span>方案列表</span><textarea v-model="homeForm.solutionItemsText" rows="5" placeholder="序号 | 标题 | 描述"></textarea></label>
+              <div class="cms-list">
+                <div class="cms-row solution" v-for="(item, index) in homeForm.solutions.items" :key="'solution-' + index">
+                  <label><span>序号</span><input v-model="item.index" /></label>
+                  <label><span>标题</span><input v-model="item.title" /></label>
+                  <label><span>描述</span><input v-model="item.desc" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.solutions.items.splice(index, 1)">删除</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.solutions.items.push({ index: '', title: '', desc: '' })">添加方案</button>
+              </div>
             </div>
 
             <div class="cms-block">
@@ -197,7 +248,18 @@
                 <label><span>标题</span><input v-model="homeForm.testimonials.title" /></label>
               </div>
               <label><span>说明</span><textarea v-model="homeForm.testimonials.subtitle" rows="3"></textarea></label>
-              <label><span>评价列表</span><textarea v-model="homeForm.testimonialItemsText" rows="5" placeholder="姓名 | 公司 | 评价 | 指标"></textarea></label>
+              <div class="cms-list">
+                <div class="cms-card-row" v-for="(item, index) in homeForm.testimonials.items" :key="'testimonial-' + index">
+                  <div class="form-grid two">
+                    <label><span>姓名</span><input v-model="item.name" /></label>
+                    <label><span>公司</span><input v-model="item.company" /></label>
+                  </div>
+                  <label><span>评价</span><textarea v-model="item.content" rows="3"></textarea></label>
+                  <label><span>指标</span><input v-model="item.metric" /></label>
+                  <button class="danger-action" type="button" @click="homeForm.testimonials.items.splice(index, 1)">删除评价</button>
+                </div>
+                <button class="ghost-action" type="button" @click="homeForm.testimonials.items.push({ name: '', company: '', content: '', metric: '' })">添加评价</button>
+              </div>
             </div>
 
             <div class="cms-block">
@@ -599,6 +661,15 @@ function textToObjects(value, fields) {
   }).filter((row) => Object.values(row).some(Boolean))
 }
 
+function objectRows(items, fields) {
+  return Array.isArray(items)
+    ? items.map((item) => fields.reduce((row, field) => {
+      row[field] = item?.[field] || ""
+      return row
+    }, {})).filter((row) => Object.values(row).some(Boolean))
+    : []
+}
+
 function normalizeHomeForm(payload = {}) {
   const home = clonePlain(payload)
   home.hero = home.hero || {}
@@ -626,13 +697,13 @@ function normalizeHomeForm(payload = {}) {
 
 function buildHomePayload(form = {}) {
   const payload = clonePlain(form)
-  payload.livePanel = { ...(payload.livePanel || {}), metrics: textToObjects(payload.liveMetricsText, ["value", "label"]) }
-  payload.heroServices = textToObjects(payload.heroServicesText, ["mark", "title", "desc", "path"])
-  payload.proofStats = textToObjects(payload.proofStatsText, ["value", "label", "desc"])
-  payload.logos = { ...(payload.logos || {}), items: textToLines(payload.logosText) }
-  payload.capability = { ...(payload.capability || {}), items: textToObjects(payload.capabilityItemsText, ["tag", "title", "desc", "image", "path"]) }
-  payload.solutions = { ...(payload.solutions || {}), items: textToObjects(payload.solutionItemsText, ["index", "title", "desc"]) }
-  payload.testimonials = { ...(payload.testimonials || {}), items: textToObjects(payload.testimonialItemsText, ["name", "company", "content", "metric"]) }
+  payload.livePanel = { ...(payload.livePanel || {}), metrics: objectRows(payload.livePanel?.metrics, ["value", "label"]) }
+  payload.heroServices = objectRows(payload.heroServices, ["mark", "title", "desc", "path"])
+  payload.proofStats = objectRows(payload.proofStats, ["value", "label", "desc"])
+  payload.logos = { ...(payload.logos || {}), items: Array.isArray(payload.logos?.items) ? payload.logos.items.map((item) => String(item || "").trim()).filter(Boolean) : [] }
+  payload.capability = { ...(payload.capability || {}), items: objectRows(payload.capability?.items, ["tag", "title", "desc", "image", "path"]) }
+  payload.solutions = { ...(payload.solutions || {}), items: objectRows(payload.solutions?.items, ["index", "title", "desc"]) }
+  payload.testimonials = { ...(payload.testimonials || {}), items: objectRows(payload.testimonials?.items, ["name", "company", "content", "metric"]) }
   delete payload.liveMetricsText
   delete payload.heroServicesText
   delete payload.proofStatsText
@@ -1331,6 +1402,43 @@ td {
   font-size: 16px;
 }
 
+.cms-list {
+  display: grid;
+  gap: 12px;
+}
+
+.cms-row {
+  display: grid;
+  grid-template-columns: minmax(86px, 0.45fr) minmax(0, 1fr) minmax(0, 1.4fr) 74px;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  background: #FFFFFF;
+}
+
+.cms-row.compact {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 74px;
+}
+
+.cms-row.service {
+  grid-template-columns: 72px minmax(0, 0.9fr) minmax(0, 1.3fr) minmax(0, 0.9fr) 74px;
+}
+
+.cms-row.solution {
+  grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.5fr) 74px;
+}
+
+.cms-card-row {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  background: #FFFFFF;
+}
+
 .form-grid {
   display: grid;
   gap: 14px;
@@ -1559,7 +1667,11 @@ textarea:focus,
   }
 
   .metric-grid,
-  .form-grid.two {
+  .form-grid.two,
+  .cms-row,
+  .cms-row.compact,
+  .cms-row.service,
+  .cms-row.solution {
     grid-template-columns: 1fr;
   }
 
