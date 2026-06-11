@@ -11,6 +11,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tiptap/extension-link": "^3.26.1",
+    "@tiptap/extension-placeholder": "^3.26.1",
+    "@tiptap/extension-underline": "^3.26.1",
+    "@tiptap/starter-kit": "^3.26.1",
+    "@tiptap/vue-3": "^3.26.1",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.0",
     "cookie-parser": "^1.4.7",

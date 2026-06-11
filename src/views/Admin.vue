@@ -317,12 +317,13 @@
               </table>
             </section>
 
-            <form v-if="topicForm" class="panel-card editor-card" @submit.prevent="saveTopic">
+            <form v-if="topicForm" class="panel-card editor-card drawer-card" @submit.prevent="saveTopic">
               <div class="panel-heading">
                 <div>
                   <span class="eyebrow">{{ topicForm.id ? 'Edit' : 'Create' }}</span>
                   <h2>{{ topicForm.id ? '编辑专题' : '新建专题' }}</h2>
                 </div>
+                <button class="ghost-action" type="button" @click="closeEditor">关闭</button>
               </div>
               <div class="form-grid two">
                 <label><span>专题标题</span><input v-model="topicForm.title" required /></label>
@@ -373,8 +374,8 @@
               </tbody>
             </table>
           </section>
-          <form v-if="messageForm.id" class="panel-card editor-card compact" @submit.prevent="saveMessage">
-            <div class="panel-heading"><div><span class="eyebrow">Reply</span><h2>回复 {{ messageForm.name }}</h2></div></div>
+          <form v-if="messageForm.id" class="panel-card editor-card drawer-card compact" @submit.prevent="saveMessage">
+            <div class="panel-heading"><div><span class="eyebrow">Reply</span><h2>回复 {{ messageForm.name }}</h2></div><button class="ghost-action" type="button" @click="closeEditor">关闭</button></div>
             <p class="message-copy">联系方式：{{ messageForm.phone || '-' }} / {{ messageForm.email || '-' }} / {{ messageForm.company || '-' }}</p>
             <p class="message-copy">{{ messageForm.content }}</p>
             <label><span>状态</span><select v-model="messageForm.status"><option value="pending">未回复</option><option value="replied">已回复</option><option value="assigned">已分配</option></select></label>
@@ -400,8 +401,8 @@
                 </tbody>
               </table>
             </section>
-            <form v-if="articleForm" class="panel-card editor-card" @submit.prevent="saveArticle">
-              <div class="panel-heading"><div><span class="eyebrow">{{ articleForm.id ? 'Edit' : 'Create' }}</span><h2>{{ articleForm.id ? '编辑文章' : '新建文章' }}</h2></div></div>
+            <form v-if="articleForm" class="panel-card editor-card drawer-card" @submit.prevent="saveArticle">
+              <div class="panel-heading"><div><span class="eyebrow">{{ articleForm.id ? 'Edit' : 'Create' }}</span><h2>{{ articleForm.id ? '编辑文章' : '新建文章' }}</h2></div><button class="ghost-action" type="button" @click="closeEditor">关闭</button></div>
               <div class="form-grid two">
                 <label><span>标题</span><input v-model="articleForm.title" required /></label>
                 <label><span>分类</span><input v-model="articleForm.category" /></label>
@@ -433,8 +434,8 @@
                 </tbody>
               </table>
             </section>
-            <form v-if="caseForm" class="panel-card editor-card" @submit.prevent="saveCase">
-              <div class="panel-heading"><div><span class="eyebrow">{{ caseForm.id ? 'Edit' : 'Create' }}</span><h2>{{ caseForm.id ? '编辑案例' : '新建案例' }}</h2></div></div>
+            <form v-if="caseForm" class="panel-card editor-card drawer-card" @submit.prevent="saveCase">
+              <div class="panel-heading"><div><span class="eyebrow">{{ caseForm.id ? 'Edit' : 'Create' }}</span><h2>{{ caseForm.id ? '编辑案例' : '新建案例' }}</h2></div><button class="ghost-action" type="button" @click="closeEditor">关闭</button></div>
               <div class="form-grid two">
                 <label><span>案例标题</span><input v-model="caseForm.title" required /></label>
                 <label><span>客户名称</span><input v-model="caseForm.client" /></label>
@@ -466,8 +467,8 @@
                 </tbody>
               </table>
             </section>
-            <form v-if="categoryForm" class="panel-card editor-card compact" @submit.prevent="saveCategory">
-              <div class="panel-heading"><div><span class="eyebrow">{{ categoryForm.id ? 'Edit' : 'Create' }}</span><h2>{{ categoryForm.id ? '编辑分类' : '新建分类' }}</h2></div></div>
+            <form v-if="categoryForm" class="panel-card editor-card drawer-card compact" @submit.prevent="saveCategory">
+              <div class="panel-heading"><div><span class="eyebrow">{{ categoryForm.id ? 'Edit' : 'Create' }}</span><h2>{{ categoryForm.id ? '编辑分类' : '新建分类' }}</h2></div><button class="ghost-action" type="button" @click="closeEditor">关闭</button></div>
               <label><span>类型</span><select v-model="categoryForm.type"><option value="article">文章</option><option value="case">案例</option><option value="topic">专题</option></select></label>
               <label><span>名称</span><input v-model="categoryForm.name" required /></label>
               <label><span>排序</span><input v-model.number="categoryForm.sortOrder" type="number" /></label>
@@ -524,12 +525,18 @@
           </section>
         </section>
       </main>
+      <div v-if="activeEditor" class="drawer-backdrop" @click="closeEditor"></div>
     </template>
   </div>
 </template>
 
 <script setup>
-import { computed, defineComponent, h, nextTick, onMounted, ref, toRaw, watch } from "vue"
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, toRaw, watch } from "vue"
+import { Editor, EditorContent } from "@tiptap/vue-3"
+import StarterKit from "@tiptap/starter-kit"
+import Link from "@tiptap/extension-link"
+import Placeholder from "@tiptap/extension-placeholder"
+import Underline from "@tiptap/extension-underline"
 import { api } from "@/services/content.js"
 
 const RichTextEditor = defineComponent({
@@ -542,43 +549,71 @@ const RichTextEditor = defineComponent({
   emits: ["update:modelValue"],
   setup(props, { emit }) {
     const editor = ref(null)
-    const actions = [
-      ["bold", "B"],
-      ["italic", "I"],
-      ["underline", "U"],
-      ["insertUnorderedList", "•"],
-      ["insertOrderedList", "1."],
-      ["formatBlock", "H2", "h2"],
-      ["formatBlock", "引用", "blockquote"]
-    ]
-    const sync = () => emit("update:modelValue", editor.value?.innerHTML || "")
-    const run = (item) => {
-      document.execCommand(item[0], false, item[2] || null)
-      sync()
-      nextTick(() => editor.value?.focus())
+    const syncExternalValue = (value) => {
+      if (!editor.value) return
+      const html = value || ""
+      if (editor.value.getHTML() !== html) editor.value.commands.setContent(html, { emitUpdate: false })
     }
-    watch(() => props.modelValue, (value) => {
-      if (editor.value && editor.value.innerHTML !== (value || "")) editor.value.innerHTML = value || ""
-    })
+    const run = (command) => {
+      if (!editor.value) return
+      command(editor.value)
+    }
+    const setLink = () => {
+      if (!editor.value) return
+      const previous = editor.value.getAttributes("link").href || ""
+      const url = window.prompt("请输入链接地址", previous)
+      if (url === null) return
+      if (!url.trim()) {
+        editor.value.chain().focus().unsetLink().run()
+        return
+      }
+      editor.value.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run()
+    }
+    const actions = [
+      { title: "撤销", label: "↶", run: (instance) => instance.chain().focus().undo().run() },
+      { title: "重做", label: "↷", run: (instance) => instance.chain().focus().redo().run() },
+      { title: "标题", label: "H2", active: () => editor.value?.isActive("heading", { level: 2 }), run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run() },
+      { title: "加粗", label: "B", active: () => editor.value?.isActive("bold"), run: (instance) => instance.chain().focus().toggleBold().run() },
+      { title: "斜体", label: "I", active: () => editor.value?.isActive("italic"), run: (instance) => instance.chain().focus().toggleItalic().run() },
+      { title: "下划线", label: "U", active: () => editor.value?.isActive("underline"), run: (instance) => instance.chain().focus().toggleUnderline().run() },
+      { title: "无序列表", label: "•", active: () => editor.value?.isActive("bulletList"), run: (instance) => instance.chain().focus().toggleBulletList().run() },
+      { title: "有序列表", label: "1.", active: () => editor.value?.isActive("orderedList"), run: (instance) => instance.chain().focus().toggleOrderedList().run() },
+      { title: "引用", label: "引", active: () => editor.value?.isActive("blockquote"), run: (instance) => instance.chain().focus().toggleBlockquote().run() },
+      { title: "链接", label: "链", active: () => editor.value?.isActive("link"), run: setLink }
+    ]
     onMounted(() => {
-      if (editor.value) editor.value.innerHTML = props.modelValue || ""
+      editor.value = new Editor({
+        content: props.modelValue || "",
+        extensions: [
+          StarterKit.configure({ heading: { levels: [2, 3] } }),
+          Underline,
+          Link.configure({ openOnClick: false, autolink: true, defaultProtocol: "https" }),
+          Placeholder.configure({ placeholder: props.placeholder })
+        ],
+        editorProps: {
+          attributes: {
+            class: "rtf-editor",
+            style: `min-height: ${props.minHeight}px;`
+          }
+        },
+        onUpdate: ({ editor: instance }) => emit("update:modelValue", instance.getHTML())
+      })
+    })
+    watch(() => props.modelValue, (value) => {
+      syncExternalValue(value)
+    })
+    onBeforeUnmount(() => {
+      editor.value?.destroy()
     })
     return () => h("div", { class: "rtf" }, [
       h("div", { class: "rtf-toolbar" }, actions.map((item) => h("button", {
         type: "button",
-        title: item[1],
+        title: item.title,
+        class: { active: item.active?.() },
         onMousedown: (event) => event.preventDefault(),
-        onClick: () => run(item)
-      }, item[1]))),
-      h("div", {
-        ref: editor,
-        class: "rtf-editor",
-        contenteditable: "true",
-        "data-placeholder": props.placeholder,
-        style: { minHeight: `${props.minHeight}px` },
-        onInput: sync,
-        onBlur: sync
-      })
+        onClick: () => run(item.run)
+      }, item.label))),
+      editor.value ? h(EditorContent, { editor: editor.value }) : null
     ])
   }
 })
@@ -624,6 +659,7 @@ const mediaFile = ref(null)
 
 const messageStatus = { pending: "未回复", replied: "已回复", assigned: "已分配" }
 const currentTab = computed(() => tabs.find((tab) => tab.id === activeTab.value))
+const activeEditor = computed(() => Boolean(topicForm.value || articleForm.value || caseForm.value || categoryForm.value || messageForm.value.id))
 const pendingMessages = computed(() => messages.value.filter((item) => item.status === "pending").length)
 const publishedTopics = computed(() => topics.value.filter((item) => item.status === "published").length)
 const maxPv = computed(() => Math.max(...(stats.value.pvTrend || []).map((row) => row.count), 1))
@@ -634,6 +670,14 @@ const chartDots = computed(() => (stats.value.pvTrend || []).map((row, index, ar
 }))
 const chartPoints = computed(() => chartDots.value.map((point) => `${point.x},${point.y}`).join(" "))
 const chartArea = computed(() => chartDots.value.length ? `28,224 ${chartPoints.value} 672,224` : "")
+
+function closeEditor() {
+  topicForm.value = null
+  articleForm.value = null
+  caseForm.value = null
+  categoryForm.value = null
+  messageForm.value = {}
+}
 
 function textToLines(value) {
   return String(value || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
@@ -1245,12 +1289,12 @@ td small {
 }
 
 .content-grid.split {
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.65fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
 .content-grid.slim {
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.45fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .panel-card {
@@ -1387,6 +1431,31 @@ td {
   max-width: 960px;
 }
 
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.drawer-card {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  width: min(760px, calc(100vw - 36px));
+  max-width: none;
+  overflow: auto;
+  animation: drawer-in 0.22s ease-out;
+}
+
+.drawer-card.compact {
+  width: min(620px, calc(100vw - 36px));
+  max-width: none;
+}
+
 .cms-block {
   display: grid;
   gap: 14px;
@@ -1515,20 +1584,48 @@ textarea:focus,
   background: #DBEAFE;
 }
 
+.rtf-toolbar button.active {
+  color: #FFFFFF;
+  background: #2563EB;
+}
+
 .rtf-editor {
   padding: 13px 14px;
   outline: none;
   line-height: 1.8;
 }
 
-.rtf-editor:empty::before {
+.rtf-editor p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
+  float: left;
+  height: 0;
   color: #94A3B8;
+  pointer-events: none;
+}
+
+.rtf-editor p {
+  margin: 0 0 0.75em;
 }
 
 .rtf-editor :deep(h2) {
   margin: 0.6em 0 0.35em;
   font-size: 22px;
+}
+
+.rtf-editor :deep(h3) {
+  margin: 0.55em 0 0.3em;
+  font-size: 18px;
+}
+
+.rtf-editor :deep(ul),
+.rtf-editor :deep(ol) {
+  margin: 8px 0 12px;
+  padding-left: 24px;
+}
+
+.rtf-editor :deep(a) {
+  color: #2563EB;
+  text-decoration: underline;
 }
 
 .rtf-editor :deep(blockquote) {
@@ -1629,6 +1726,11 @@ textarea:focus,
   50% { transform: scale(1.08); opacity: 1; }
 }
 
+@keyframes drawer-in {
+  from { transform: translateX(28px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 @media (max-width: 1080px) {
   .admin-sidebar {
     position: sticky;
@@ -1677,6 +1779,13 @@ textarea:focus,
 
   .admin-sidebar nav {
     grid-template-columns: 1fr;
+  }
+
+  .drawer-card,
+  .drawer-card.compact {
+    inset: 0;
+    width: 100vw;
+    border-radius: 0;
   }
 }
 </style>
