@@ -531,7 +531,7 @@
 </template>
 
 <script setup>
-import { computed, defineComponent, h, onBeforeUnmount, ref, shallowRef, toRaw } from "vue"
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, shallowRef, toRaw } from "vue"
 import "@wangeditor/editor/dist/css/style.css"
 import { Editor as WangEditor, Toolbar as WangToolbar } from "@wangeditor/editor-for-vue"
 import { api } from "@/services/content.js"
