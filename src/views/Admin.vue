@@ -525,7 +525,7 @@
           </section>
         </section>
       </main>
-      <div v-if="activeEditor" class="drawer-backdrop" @click="closeEditor"></div>
+      <div v-if="activeEditor" class="drawer-backdrop"></div>
     </template>
   </div>
 </template>
@@ -1405,18 +1405,20 @@ td {
 
 .drawer-card {
   position: fixed;
-  top: 18px;
-  right: 18px;
-  bottom: 18px;
+  top: 28px;
+  right: 0;
+  bottom: 28px;
+  left: 0;
   z-index: 50;
-  width: min(760px, calc(100vw - 36px));
+  width: min(1080px, calc(100vw - 56px));
   max-width: none;
+  margin: 0 auto;
   overflow: auto;
-  animation: drawer-in 0.22s ease-out;
+  animation: modal-in 0.2s ease-out;
 }
 
 .drawer-card.compact {
-  width: min(620px, calc(100vw - 36px));
+  width: min(840px, calc(100vw - 56px));
   max-width: none;
 }
 
@@ -1659,9 +1661,9 @@ textarea:focus,
   50% { transform: scale(1.08); opacity: 1; }
 }
 
-@keyframes drawer-in {
-  from { transform: translateX(28px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+@keyframes modal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (max-width: 1080px) {
