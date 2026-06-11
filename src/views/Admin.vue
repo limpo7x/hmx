@@ -313,6 +313,7 @@
           </section>
           <form v-if="messageForm.id" class="panel-card editor-card compact" @submit.prevent="saveMessage">
             <div class="panel-heading"><div><span class="eyebrow">Reply</span><h2>回复 {{ messageForm.name }}</h2></div></div>
+            <p class="message-copy">联系方式：{{ messageForm.phone || '-' }} / {{ messageForm.email || '-' }} / {{ messageForm.company || '-' }}</p>
             <p class="message-copy">{{ messageForm.content }}</p>
             <label><span>状态</span><select v-model="messageForm.status"><option value="pending">未回复</option><option value="replied">已回复</option><option value="assigned">已分配</option></select></label>
             <label><span>回复内容</span><RichTextEditor v-model="messageForm.reply" placeholder="输入回复内容" /></label>

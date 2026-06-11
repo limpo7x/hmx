@@ -42,14 +42,21 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from "vue"
 import ContactForm from "@/components/ContactForm.vue"
+import { contentState, loadSite } from "@/services/content.js"
 
-const contactItems = [
-  { label: "电话", value: "400-888-9999" },
-  { label: "邮箱", value: "contact@hongmengxian.com" },
-  { label: "地址", value: "西安市高新区科技路 88 号" },
-  { label: "工作时间", value: "周一至周五 9:00 - 18:00" }
-]
+const site = computed(() => contentState.site)
+const contactItems = computed(() => [
+  { label: "电话", value: site.value.phone || "400-888-9999" },
+  { label: "邮箱", value: site.value.email || "contact@hongmengxian.com" },
+  { label: "地址", value: site.value.address || "西安市高新区科技路 88 号" },
+  { label: "工作时间", value: site.value.workTime || "周一至周五 9:00 - 18:00" }
+])
+
+onMounted(() => {
+  if (!contentState.loaded) loadSite()
+})
 </script>
 
 <style scoped>
