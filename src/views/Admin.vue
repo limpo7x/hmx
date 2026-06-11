@@ -221,6 +221,8 @@
             </div>
 
             <button class="primary-action">保存首页栏目</button>
+            <strong v-if="homeSaveMessage" class="form-success">{{ homeSaveMessage }}</strong>
+            <strong v-if="homeSaveError" class="form-error">{{ homeSaveError }}</strong>
           </form>
         </section>
 
@@ -464,7 +466,7 @@
 </template>
 
 <script setup>
-import { computed, defineComponent, h, nextTick, onMounted, ref, watch } from "vue"
+import { computed, defineComponent, h, nextTick, onMounted, ref, toRaw, watch } from "vue"
 import { api } from "@/services/content.js"
 
 const RichTextEditor = defineComponent({
@@ -547,6 +549,8 @@ const media = ref([])
 const logs = ref([])
 const siteForm = ref({})
 const homeForm = ref({})
+const homeSaveMessage = ref("")
+const homeSaveError = ref("")
 const topicForm = ref(null)
 const articleForm = ref(null)
 const caseForm = ref(null)
@@ -580,6 +584,10 @@ function rowsToText(items, fields) {
   return Array.isArray(items) ? items.map((item) => fields.map((field) => item?.[field] || "").join(" | ")).join("\n") : ""
 }
 
+function clonePlain(value) {
+  return JSON.parse(JSON.stringify(toRaw(value || {})))
+}
+
 function textToObjects(value, fields) {
   return textToLines(value).map((line) => {
     const parts = line.split("|").map((part) => part.trim())
@@ -591,7 +599,7 @@ function textToObjects(value, fields) {
 }
 
 function normalizeHomeForm(payload = {}) {
-  const home = structuredClone(payload || {})
+  const home = clonePlain(payload)
   home.hero = home.hero || {}
   home.livePanel = home.livePanel || {}
   home.heroServices = home.heroServices || []
@@ -616,7 +624,7 @@ function normalizeHomeForm(payload = {}) {
 }
 
 function buildHomePayload(form = {}) {
-  const payload = structuredClone(form || {})
+  const payload = clonePlain(form)
   payload.livePanel = { ...(payload.livePanel || {}), metrics: textToObjects(payload.liveMetricsText, ["value", "label"]) }
   payload.heroServices = textToObjects(payload.heroServicesText, ["mark", "title", "desc", "path"])
   payload.proofStats = textToObjects(payload.proofStatsText, ["value", "label", "desc"])
@@ -825,8 +833,15 @@ async function saveSite() {
 }
 
 async function saveHome() {
-  const next = await api.put("/api/admin/home", buildHomePayload(homeForm.value))
-  homeForm.value = normalizeHomeForm(next || {})
+  homeSaveMessage.value = ""
+  homeSaveError.value = ""
+  try {
+    const next = await api.put("/api/admin/home", buildHomePayload(homeForm.value))
+    homeForm.value = normalizeHomeForm(next || {})
+    homeSaveMessage.value = "首页栏目已保存"
+  } catch (err) {
+    homeSaveError.value = err.message || "保存失败"
+  }
 }
 
 function onMediaFile(event) {
@@ -1483,6 +1498,12 @@ textarea:focus,
   display: block;
   margin-top: 14px;
   color: #FCA5A5;
+}
+
+.form-success {
+  display: block;
+  margin-top: 14px;
+  color: #059669;
 }
 
 @keyframes admin-grid {
