@@ -547,7 +547,17 @@ const RichTextEditor = defineComponent({
   setup(props, { emit }) {
     const editorRef = shallowRef(null)
     const toolbarConfig = {
-      excludeKeys: ["fullScreen", "group-video", "insertTable", "codeBlock", "todo"]
+      excludeKeys: [
+        "headerSelect",
+        "fontSize",
+        "fontFamily",
+        "lineHeight",
+        "fullScreen",
+        "group-video",
+        "insertTable",
+        "codeBlock",
+        "todo"
+      ]
     }
     const editorConfig = {
       placeholder: props.placeholder,
