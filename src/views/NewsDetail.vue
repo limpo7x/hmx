@@ -10,9 +10,7 @@
 
     <section class="section">
       <div class="container article-layout" v-if="article">
-        <article class="article-content glass-card">
-          <p v-for="(paragraph, index) in formattedContent" :key="index">{{ paragraph }}</p>
-        </article>
+        <article class="article-content glass-card rich-content" v-html="articleContentHtml"></article>
         <router-link to="/news" class="back-link dynamic-card">返回资讯列表</router-link>
       </div>
 
@@ -38,12 +36,27 @@ const fallbackArticles = [
 
 const article = ref(fallbackArticles.find(a => a.id === Number(route.params.id)))
 
-const formattedContent = computed(() => {
-  if (!article.value) return []
-  return String(article.value.content || article.value.summary || "")
-    .split("\n\n")
+const articleContentHtml = computed(() => {
+  if (!article.value) return ""
+  const content = String(article.value.content || article.value.summary || "")
+  if (/<\/?[a-z][\s\S]*>/i.test(content)) return content
+  return content
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
     .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
+    .join("")
 })
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[char])
+}
 
 onMounted(async () => {
   article.value = await api.get(`/api/articles/${route.params.id}`).catch(() => article.value)
@@ -65,15 +78,42 @@ onMounted(async () => {
   background: #FFFFFF;
 }
 
-.article-content p {
+.article-content :deep(p) {
   margin-bottom: 24px;
   color: var(--text);
   font-size: 17px;
   line-height: 2;
 }
 
-.article-content p:last-child {
+.article-content :deep(p:last-child) {
   margin-bottom: 0;
+}
+
+.article-content :deep(h2),
+.article-content :deep(h3) {
+  margin: 28px 0 14px;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.article-content :deep(ul),
+.article-content :deep(ol) {
+  margin: 0 0 24px 24px;
+  color: var(--text);
+  line-height: 2;
+}
+
+.article-content :deep(blockquote) {
+  margin: 24px 0;
+  padding: 16px 20px;
+  border-left: 4px solid #0B63F6;
+  background: #F8FAFC;
+  color: var(--text-secondary);
+}
+
+.article-content :deep(a) {
+  color: #0B63F6;
+  text-decoration: underline;
 }
 
 .back-link {
@@ -97,7 +137,7 @@ onMounted(async () => {
     padding: 26px;
   }
 
-  .article-content p {
+  .article-content :deep(p) {
     font-size: 15px;
   }
 }

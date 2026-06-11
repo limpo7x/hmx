@@ -55,8 +55,24 @@ const upload = multer({
 
 const cleanText = (value, max = 2000) => String(value ?? "").trim().slice(0, max)
 const cleanHtml = (value) => sanitizeHtml(String(value ?? ""), {
-  allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "ol", "ul", "li", "blockquote", "a", "img", "h2", "h3"],
-  allowedAttributes: { a: ["href", "target", "rel"], img: ["src", "alt"] },
+  allowedTags: [
+    "p", "br", "strong", "b", "em", "i", "u", "s", "ol", "ul", "li", "blockquote",
+    "a", "img", "h1", "h2", "h3", "h4", "h5", "h6", "span", "pre", "code",
+    "table", "thead", "tbody", "tr", "th", "td", "hr"
+  ],
+  allowedAttributes: {
+    "*": ["style"],
+    a: ["href", "target", "rel"],
+    img: ["src", "alt", "width", "height"]
+  },
+  allowedStyles: {
+    "*": {
+      color: [/^#[0-9a-f]{3,8}$/i, /^rgb\(/i, /^rgba\(/i],
+      "background-color": [/^#[0-9a-f]{3,8}$/i, /^rgb\(/i, /^rgba\(/i],
+      "text-align": [/^left$/, /^right$/, /^center$/, /^justify$/],
+      "font-size": [/^\d+(px|em|rem|%)$/]
+    }
+  },
   allowedSchemes: ["http", "https", "mailto", "data"]
 })
 const toList = (value) => Array.isArray(value) ? value.map((v) => cleanText(v, 120)).filter(Boolean) : []

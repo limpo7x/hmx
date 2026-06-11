@@ -531,12 +531,9 @@
 </template>
 
 <script setup>
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, toRaw, watch } from "vue"
-import { Editor, EditorContent } from "@tiptap/vue-3"
-import StarterKit from "@tiptap/starter-kit"
-import Link from "@tiptap/extension-link"
-import Placeholder from "@tiptap/extension-placeholder"
-import Underline from "@tiptap/extension-underline"
+import { computed, defineComponent, h, onBeforeUnmount, ref, shallowRef, toRaw } from "vue"
+import "@wangeditor/editor/dist/css/style.css"
+import { Editor as WangEditor, Toolbar as WangToolbar } from "@wangeditor/editor-for-vue"
 import { api } from "@/services/content.js"
 
 const RichTextEditor = defineComponent({
@@ -548,72 +545,39 @@ const RichTextEditor = defineComponent({
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
-    const editor = ref(null)
-    const syncExternalValue = (value) => {
-      if (!editor.value) return
-      const html = value || ""
-      if (editor.value.getHTML() !== html) editor.value.commands.setContent(html, { emitUpdate: false })
+    const editorRef = shallowRef(null)
+    const toolbarConfig = {
+      excludeKeys: ["fullScreen", "group-video", "insertTable", "codeBlock", "todo"]
     }
-    const run = (command) => {
-      if (!editor.value) return
-      command(editor.value)
-    }
-    const setLink = () => {
-      if (!editor.value) return
-      const previous = editor.value.getAttributes("link").href || ""
-      const url = window.prompt("请输入链接地址", previous)
-      if (url === null) return
-      if (!url.trim()) {
-        editor.value.chain().focus().unsetLink().run()
-        return
+    const editorConfig = {
+      placeholder: props.placeholder,
+      scroll: true,
+      MENU_CONF: {
+        uploadImage: { server: "" }
       }
-      editor.value.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run()
     }
-    const actions = [
-      { title: "撤销", label: "↶", run: (instance) => instance.chain().focus().undo().run() },
-      { title: "重做", label: "↷", run: (instance) => instance.chain().focus().redo().run() },
-      { title: "标题", label: "H2", active: () => editor.value?.isActive("heading", { level: 2 }), run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run() },
-      { title: "加粗", label: "B", active: () => editor.value?.isActive("bold"), run: (instance) => instance.chain().focus().toggleBold().run() },
-      { title: "斜体", label: "I", active: () => editor.value?.isActive("italic"), run: (instance) => instance.chain().focus().toggleItalic().run() },
-      { title: "下划线", label: "U", active: () => editor.value?.isActive("underline"), run: (instance) => instance.chain().focus().toggleUnderline().run() },
-      { title: "无序列表", label: "•", active: () => editor.value?.isActive("bulletList"), run: (instance) => instance.chain().focus().toggleBulletList().run() },
-      { title: "有序列表", label: "1.", active: () => editor.value?.isActive("orderedList"), run: (instance) => instance.chain().focus().toggleOrderedList().run() },
-      { title: "引用", label: "引", active: () => editor.value?.isActive("blockquote"), run: (instance) => instance.chain().focus().toggleBlockquote().run() },
-      { title: "链接", label: "链", active: () => editor.value?.isActive("link"), run: setLink }
-    ]
-    onMounted(() => {
-      editor.value = new Editor({
-        content: props.modelValue || "",
-        extensions: [
-          StarterKit.configure({ heading: { levels: [2, 3] } }),
-          Underline,
-          Link.configure({ openOnClick: false, autolink: true, defaultProtocol: "https" }),
-          Placeholder.configure({ placeholder: props.placeholder })
-        ],
-        editorProps: {
-          attributes: {
-            class: "rtf-editor",
-            style: `min-height: ${props.minHeight}px;`
-          }
-        },
-        onUpdate: ({ editor: instance }) => emit("update:modelValue", instance.getHTML())
-      })
-    })
-    watch(() => props.modelValue, (value) => {
-      syncExternalValue(value)
-    })
+    const handleCreated = (editor) => {
+      editorRef.value = editor
+    }
     onBeforeUnmount(() => {
-      editor.value?.destroy()
+      editorRef.value?.destroy()
     })
     return () => h("div", { class: "rtf" }, [
-      h("div", { class: "rtf-toolbar" }, actions.map((item) => h("button", {
-        type: "button",
-        title: item.title,
-        class: { active: item.active?.() },
-        onMousedown: (event) => event.preventDefault(),
-        onClick: () => run(item.run)
-      }, item.label))),
-      editor.value ? h(EditorContent, { editor: editor.value }) : null
+      h(WangToolbar, {
+        editor: editorRef.value,
+        defaultConfig: toolbarConfig,
+        mode: "default",
+        class: "rtf-toolbar"
+      }),
+      h(WangEditor, {
+        modelValue: props.modelValue,
+        "onUpdate:modelValue": (value) => emit("update:modelValue", value),
+        defaultConfig: editorConfig,
+        mode: "default",
+        style: { height: `${Math.max(props.minHeight, 220)}px`, overflowY: "hidden" },
+        class: "rtf-editor",
+        onOnCreated: handleCreated
+      })
     ])
   }
 })
@@ -1563,72 +1527,41 @@ textarea:focus,
 }
 
 .rtf-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px;
   border-bottom: 1px solid #E6EDF3;
   background: #F8FAFC;
 }
 
-.rtf-toolbar button {
-  min-width: 34px;
-  height: 30px;
-  border-radius: 8px;
-  color: #1E293B;
-  background: #FFFFFF;
-  font-weight: 900;
-}
-
-.rtf-toolbar button:hover {
-  background: #DBEAFE;
-}
-
-.rtf-toolbar button.active {
-  color: #FFFFFF;
-  background: #2563EB;
-}
-
 .rtf-editor {
-  padding: 13px 14px;
-  outline: none;
+  background: #FFFFFF;
+}
+
+.rtf-editor :deep(.w-e-text-container p) {
+  margin: 0 0 0.75em;
   line-height: 1.8;
 }
 
-.rtf-editor p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  color: #94A3B8;
-  pointer-events: none;
-}
-
-.rtf-editor p {
-  margin: 0 0 0.75em;
-}
-
-.rtf-editor :deep(h2) {
+.rtf-editor :deep(.w-e-text-container h2) {
   margin: 0.6em 0 0.35em;
   font-size: 22px;
 }
 
-.rtf-editor :deep(h3) {
+.rtf-editor :deep(.w-e-text-container h3) {
   margin: 0.55em 0 0.3em;
   font-size: 18px;
 }
 
-.rtf-editor :deep(ul),
-.rtf-editor :deep(ol) {
+.rtf-editor :deep(.w-e-text-container ul),
+.rtf-editor :deep(.w-e-text-container ol) {
   margin: 8px 0 12px;
   padding-left: 24px;
 }
 
-.rtf-editor :deep(a) {
+.rtf-editor :deep(.w-e-text-container a) {
   color: #2563EB;
   text-decoration: underline;
 }
 
-.rtf-editor :deep(blockquote) {
+.rtf-editor :deep(.w-e-text-container blockquote) {
   margin: 10px 0;
   padding: 10px 14px;
   border-left: 3px solid #2563EB;
