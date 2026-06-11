@@ -350,7 +350,7 @@
               </label>
               <label>
                 <span>内部备注</span>
-                <RichTextEditor v-model="topicForm.note" placeholder="记录上线原因、运营事项或内部说明" :min-height="108" />
+                <input v-model="topicForm.note" placeholder="记录上线原因、运营事项或内部说明" />
               </label>
               <button class="primary-action">保存专题</button>
             </form>
@@ -380,7 +380,7 @@
             <p class="message-copy">{{ messageForm.content }}</p>
             <label><span>状态</span><select v-model="messageForm.status"><option value="pending">未回复</option><option value="replied">已回复</option><option value="assigned">已分配</option></select></label>
             <label><span>回复内容</span><RichTextEditor v-model="messageForm.reply" placeholder="输入回复内容" /></label>
-            <label><span>跟进备注</span><RichTextEditor v-model="messageForm.note" placeholder="记录跟进人、沟通进展或下一步动作" :min-height="108" /></label>
+            <label><span>跟进备注</span><input v-model="messageForm.note" placeholder="记录跟进人、沟通进展或下一步动作" /></label>
             <button class="primary-action">保存回复</button>
           </form>
         </section>
@@ -413,7 +413,7 @@
                 <label><span>状态</span><select v-model="articleForm.status"><option value="draft">草稿</option><option value="published">已发布</option></select></label>
                 <label><span>发布日期</span><input v-model="articleForm.date" type="date" /></label>
               </div>
-              <label><span>内部备注</span><RichTextEditor v-model="articleForm.note" placeholder="文章维护备注" :min-height="108" /></label>
+              <label><span>内部备注</span><input v-model="articleForm.note" placeholder="文章维护备注" /></label>
               <button class="primary-action">保存文章</button>
             </form>
           </div>
@@ -447,7 +447,7 @@
               <label><span>案例说明</span><RichTextEditor v-model="caseForm.desc" placeholder="输入案例说明" /></label>
               <label><span>结果数据</span><textarea v-model="caseForm.resultsText" rows="4" placeholder="每行一个结果"></textarea></label>
               <label><span>标签</span><input v-model="caseForm.tagsText" placeholder="用逗号分隔" /></label>
-              <label><span>内部备注</span><RichTextEditor v-model="caseForm.note" placeholder="案例维护备注" :min-height="108" /></label>
+              <label><span>内部备注</span><input v-model="caseForm.note" placeholder="案例维护备注" /></label>
               <button class="primary-action">保存案例</button>
             </form>
           </div>

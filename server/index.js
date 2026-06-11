@@ -348,7 +348,7 @@ app.patch("/api/admin/messages/:id", auth, (req, res) => {
   const status = cleanText(req.body?.status, 40) || "pending"
   const reply = cleanHtml(req.body?.reply)
   db.prepare("UPDATE messages SET status = ?, reply = ?, note = ?, updated_at = ? WHERE id = ?")
-    .run(status, reply, cleanHtml(req.body?.note), now(), req.params.id)
+    .run(status, reply, cleanText(req.body?.note, 500), now(), req.params.id)
   audit(req.admin.id, "update", "message", req.params.id)
   res.json({ ok: true })
 })
@@ -648,7 +648,7 @@ function topicPayload(body = {}) {
     status: body.status === "published" ? "published" : "draft",
     startsAt: cleanText(body.startsAt || body.starts_at, 40),
     endsAt: cleanText(body.endsAt || body.ends_at, 40),
-    note: cleanHtml(body.note)
+    note: cleanText(body.note, 500)
   }
 }
 
@@ -664,7 +664,7 @@ function casePayload(body = {}) {
     tags: toList(body.tags),
     status: body.status === "published" ? "published" : "draft",
     link: cleanText(body.link, 300),
-    note: cleanHtml(body.note),
+    note: cleanText(body.note, 500),
     published_at: cleanText(body.date || body.published_at, 20)
   }
 }
