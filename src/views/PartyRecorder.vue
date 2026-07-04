@@ -23,10 +23,10 @@
 
         <div class="hero-guide" aria-label="聚会记录大师卡通记录官导览">
           <div class="guide-figure">
-            <img class="topic-guide-mascot" src="/party-recorder/app-icon-guide.png" alt="聚会记录大师卡通记录官" />
+            <img class="topic-guide-person" src="/party-recorder/hero-character-phone-transparent.png" alt="聚会记录大师卡通记录官拿着手机导览" />
             <span class="guide-nameplate">聚会记录官</span>
           </div>
-          <div class="topic-guide-bubble">跟着我走：先开一局，拍下照片和视频，再让时间线自动整理成可分享回忆。</div>
+          <div class="topic-guide-bubble">我是你的聚会记录官。跟着我走一遍，就知道一场聚会怎么被记录成回忆。</div>
           <div class="topic-guide-route">
             <b>开局</b>
             <b>记录</b>
@@ -38,80 +38,30 @@
       </div>
     </section>
 
-    <section class="party-panel feature-panel">
-      <div class="story-ribbon" aria-hidden="true"></div>
-      <div class="party-shell comic-spread">
-        <article class="comic-frame large">
-          <span class="frame-index">01</span>
-          <h2>三步开局，不让气氛等人</h2>
-          <p>创建聚会、邀请好友、拍下第一张照片，主流程围绕真实聚会记录展开，不把入口藏进复杂菜单。</p>
-          <div class="mini-flow">
-            <b>创建</b>
-            <b>邀请</b>
-            <b>记录</b>
+    <section id="party-timeline" class="guide-tour">
+      <div class="party-shell guide-tour-grid">
+        <aside class="guide-host" aria-label="聚会记录官导览">
+          <img src="/party-recorder/hero-character-phone-transparent.png" alt="聚会记录官拿着手机介绍功能" />
+          <div class="guide-dialog">
+            <strong>我来带你走完整流程</strong>
+            <span>每一步都是聚会现场会发生的事。</span>
           </div>
-        </article>
+        </aside>
 
-        <article class="comic-frame camera-frame">
-          <img src="/party-recorder/comic-camera.png" alt="聚会拍照记录插画" />
-          <i class="mini-character">摄影手</i>
-          <strong>拍照即记录</strong>
-          <p>现场照片进入本局相册，也能成为分享图素材。</p>
-        </article>
-
-        <article class="comic-frame">
-          <span class="frame-index">02</span>
-          <h3>每个成员都能加入</h3>
-          <p>好友通过邀请进入同一场聚会，查看记录、相册、账本和分享内容。</p>
-          <div class="crew-stack" aria-hidden="true">
-            <b>记</b>
-            <b>拍</b>
-            <b>玩</b>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="party-timeline" class="party-panel timeline-panel">
-      <div class="party-shell timeline-grid">
-        <div class="timeline-copy">
-          <span class="comic-label">时间线能力</span>
-          <h2>把混乱的一晚，自动排成回忆时间线</h2>
-          <p>照片、视频、账本变动、关键文案、分享图生成状态都按时间串起来。结束后不是一堆散图，而是一段可回看的故事。</p>
+        <div class="tour-scenes">
+          <article v-for="(step, index) in guideSteps" :key="step.title" :class="['tour-scene', step.tone]">
+            <span class="scene-kicker">{{ step.kicker }}</span>
+            <h2>{{ step.title }}</h2>
+            <p>{{ step.desc }}</p>
+            <div class="scene-body" :class="{ 'no-image': !step.image }">
+              <img v-if="step.image" :src="step.image" :alt="step.imageAlt" />
+              <div class="scene-points">
+                <b v-for="point in step.points" :key="point">{{ point }}</b>
+              </div>
+            </div>
+            <i class="scene-step">{{ String(index + 1).padStart(2, '0') }}</i>
+          </article>
         </div>
-
-        <div class="timeline-board">
-          <div v-for="item in timelineItems" :key="item.time" class="timeline-card">
-            <time>{{ item.time }}</time>
-            <strong>{{ item.title }}</strong>
-            <span>{{ item.desc }}</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="party-panel media-panel">
-      <div class="party-shell media-grid">
-        <article class="media-card video">
-          <span>VIDEO</span>
-          <h2>视频图文一起收进相册</h2>
-          <p>支持照片与视频节点，适合记录开场、互动、祝福、精彩瞬间和聚会结尾。</p>
-          <i class="media-person">视频记录员</i>
-        </article>
-
-        <article class="media-card album">
-          <span>ALBUM</span>
-          <h2>从现场素材生成分享图</h2>
-          <p>分享预览基于真实照片、账本和时间线生成，底部附小程序二维码，方便好友回流。</p>
-          <i class="media-person">相册整理员</i>
-        </article>
-
-        <article class="media-card ledger">
-          <span>LEDGER</span>
-          <h2>账本事件也进入回忆</h2>
-          <p>聚会账本不再是孤立工具，变动会写入时间线，成为聚会过程的一部分。</p>
-          <i class="media-person">账本监督员</i>
-        </article>
       </div>
     </section>
 
@@ -136,12 +86,41 @@
 </template>
 
 <script setup>
-const timelineItems = [
-  { time: "19:30", title: "创建聚会", desc: "发起人开局并邀请好友加入" },
-  { time: "19:42", title: "第一张照片", desc: "现场照片进入聚会相册" },
-  { time: "20:18", title: "视频记录", desc: "精彩片段成为时间线节点" },
-  { time: "21:05", title: "账本变动", desc: "费用和互动事件同步记录" },
-  { time: "22:10", title: "生成分享图", desc: "真实素材生成可保存回忆海报" }
+const guideSteps = [
+  {
+    kicker: "先开一局",
+    title: "我先帮你把聚会建起来",
+    desc: "发起人创建聚会，好友通过邀请加入。现场不用解释太多，先把大家放进同一场记录里。",
+    image: "/party-recorder/comic-camera.png",
+    imageAlt: "聚会记录大师拍照记录插画",
+    points: ["创建聚会", "邀请好友", "拍第一张照片"],
+    tone: "start"
+  },
+  {
+    kicker: "记录现场",
+    title: "照片和视频，我都帮你收好",
+    desc: "聚会里的开场、祝福、互动和精彩瞬间，可以用图片和视频沉淀到同一个相册里。",
+    image: "/party-recorder/party-hero.png",
+    imageAlt: "朋友聚会举杯场景",
+    points: ["照片上传", "视频节点", "成员可见"],
+    tone: "media"
+  },
+  {
+    kicker: "自动整理",
+    title: "我把过程排成时间线",
+    desc: "照片、视频、账本变动和分享图生成状态都会按时间串起来。结束后看到的是一段完整故事。",
+    points: ["19:30 创建聚会", "19:42 第一张照片", "20:18 视频记录", "21:05 账本变动"],
+    tone: "timeline"
+  },
+  {
+    kicker: "分享回忆",
+    title: "最后生成带二维码的分享图",
+    desc: "分享图基于真实素材生成，底部带小程序二维码，好友扫码就能继续回到聚会记录里。",
+    image: "/party-recorder/miniapp-code.jpg",
+    imageAlt: "聚会记录大师小程序二维码",
+    points: ["真实素材", "回忆海报", "扫码回流"],
+    tone: "share"
+  }
 ]
 </script>
 
@@ -171,8 +150,8 @@ const timelineItems = [
 .comic-button.dark { color: #FFFFFF; background: #16110F; box-shadow: 6px 6px 0 #FFCC33; }
 .hero-guide { position: relative; min-height: 610px; padding: 18px; border: 4px solid #16110F; border-radius: 20px; background: #FFFFFF; box-shadow: 12px 12px 0 #16110F; transform: rotate(1.2deg); animation: comic-float 5.2s ease-in-out infinite; overflow: hidden; }
 .hero-guide::before { content: ""; position: absolute; inset: 18px; border: 5px dashed rgba(22, 17, 15, 0.32); border-radius: 50%; animation: guide-orbit 8s linear infinite; }
-.guide-figure { position: absolute; z-index: 2; left: 50%; top: 48%; width: min(72%, 470px); transform: translate(-50%, -50%); text-align: center; }
-.topic-guide-mascot { display: block; width: 100%; border: 6px solid #16110F; border-radius: 52px; background: #FFFFFF; box-shadow: 14px 14px 0 #16110F; animation: guide-mascot-bounce 4.6s ease-in-out infinite; }
+.guide-figure { position: absolute; z-index: 2; left: 50%; top: 48%; width: min(88%, 560px); transform: translate(-50%, -50%); text-align: center; }
+.topic-guide-person { display: block; width: 116%; max-width: none; margin-left: -9%; filter: drop-shadow(14px 16px 0 rgba(22, 17, 15, 0.22)); animation: guide-mascot-bounce 4.6s ease-in-out infinite; }
 .guide-nameplate { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: -14px; padding: 0 18px; border: 3px solid #16110F; border-radius: 999px; color: #16110F; background: #FFEF5A; box-shadow: 5px 5px 0 #16110F; font-weight: 950; }
 .topic-guide-bubble { position: absolute; z-index: 3; right: 24px; top: 24px; max-width: 330px; padding: 16px 18px; border: 4px solid #16110F; border-radius: 18px; color: #16110F; background: #FFFFFF; box-shadow: 7px 7px 0 #16110F; font-size: 18px; line-height: 1.45; font-weight: 950; }
 .topic-guide-bubble::after { content: ""; position: absolute; left: 42px; bottom: -19px; width: 28px; height: 28px; border-right: 4px solid #16110F; border-bottom: 4px solid #16110F; background: #FFFFFF; transform: rotate(45deg); }
@@ -184,6 +163,32 @@ const timelineItems = [
 .topic-guide-route b:nth-child(4) { background: #52E2FF; }
 .memory-preview { position: absolute; z-index: 1; left: 22px; bottom: 96px; width: 220px; height: 128px; object-fit: cover; border: 4px solid #16110F; border-radius: 12px; box-shadow: 7px 7px 0 #16110F; transform: rotate(-5deg); }
 .mini-character, .media-person { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 13px; border: 3px solid #16110F; border-radius: 999px; color: #16110F; background: #FFFFFF; box-shadow: 4px 4px 0 #16110F; font-style: normal; font-weight: 950; }
+.guide-tour { position: relative; padding: 116px 0; background: #FFF9D7; overflow: visible; }
+.guide-tour::before { content: ""; position: absolute; inset: 0; opacity: 0.13; background-image: radial-gradient(#16110F 2px, transparent 2px); background-size: 22px 22px; transform: rotate(4deg); }
+.guide-tour-grid { position: relative; display: grid; grid-template-columns: 0.86fr 1.14fr; gap: 64px; align-items: start; }
+.guide-host { position: sticky; top: 92px; min-height: calc(100svh - 124px); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.guide-host img { width: min(44vw, 520px); max-width: none; margin-left: -8vw; filter: drop-shadow(12px 14px 0 rgba(22, 17, 15, 0.20)); animation: guide-mascot-bounce 4.8s ease-in-out infinite; }
+.guide-dialog { position: relative; z-index: 2; width: min(360px, 100%); margin-top: -34px; padding: 18px 20px; border: 4px solid #16110F; border-radius: 18px; color: #16110F; background: #FFFFFF; box-shadow: 7px 7px 0 #16110F; }
+.guide-dialog::before { content: ""; position: absolute; left: 46px; top: -18px; width: 28px; height: 28px; border-left: 4px solid #16110F; border-top: 4px solid #16110F; background: #FFFFFF; transform: rotate(45deg); }
+.guide-dialog strong, .guide-dialog span { display: block; }
+.guide-dialog strong { margin-bottom: 8px; font-size: 24px; line-height: 1.15; font-weight: 950; }
+.guide-dialog span { color: #4C4038; font-size: 15px; line-height: 1.55; font-weight: 800; }
+.tour-scenes { display: grid; gap: 46px; }
+.tour-scene { position: relative; min-height: 70svh; display: flex; flex-direction: column; justify-content: center; padding: 42px; border: 4px solid #16110F; border-radius: 20px; background: #FFFFFF; box-shadow: 12px 12px 0 #16110F; overflow: hidden; animation: scene-breathe 4.8s ease-in-out infinite; }
+.tour-scene::before { content: ""; position: absolute; inset: auto -8% -18% auto; width: 260px; height: 260px; border: 5px dashed rgba(22, 17, 15, 0.28); border-radius: 50%; animation: guide-orbit 10s linear infinite; }
+.tour-scene.media { background: #52E2FF; }
+.tour-scene.timeline { background: #FFEF5A; }
+.tour-scene.share { background: #FFB0D7; }
+.scene-kicker { width: fit-content; margin-bottom: 18px; padding: 7px 12px; border: 3px solid #16110F; border-radius: 8px; color: #16110F; background: #FFFFFF; box-shadow: 4px 4px 0 #16110F; font-size: 13px; font-weight: 950; }
+.tour-scene h2 { max-width: 680px; margin: 0 0 16px; font-size: clamp(32px, 4.6vw, 58px); line-height: 1.05; font-weight: 950; letter-spacing: 0; }
+.tour-scene p { max-width: 690px; margin: 0 0 24px; color: #3F352F; font-size: 18px; line-height: 1.75; font-weight: 800; }
+.scene-body { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 22px; align-items: end; }
+.scene-body.no-image { grid-template-columns: 1fr; }
+.scene-body img { width: 100%; max-height: 260px; object-fit: cover; border: 4px solid #16110F; border-radius: 14px; box-shadow: 7px 7px 0 #16110F; background: #FFFFFF; }
+.tour-scene.share .scene-body img { width: min(240px, 100%); justify-self: center; aspect-ratio: 1; object-fit: contain; padding: 10px; }
+.scene-points { display: flex; flex-wrap: wrap; gap: 12px; }
+.scene-points b { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 16px; border: 3px solid #16110F; border-radius: 999px; color: #16110F; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; font-size: 15px; font-weight: 950; }
+.scene-step { position: absolute; right: 28px; top: 24px; color: rgba(22, 17, 15, 0.14); font-size: 96px; line-height: 1; font-style: normal; font-weight: 950; }
 .feature-panel { background: #FFF9D7; }
 .story-ribbon { position: absolute; left: 5%; right: 5%; top: 50%; height: 34%; border-top: 7px solid rgba(239, 51, 64, 0.55); border-radius: 50% 50% 0 0; transform: rotate(4deg); pointer-events: none; }
 .story-ribbon::after { content: ""; position: absolute; right: 14%; top: -14px; width: 22px; height: 22px; border: 3px solid #16110F; border-radius: 50%; background: #EF3340; box-shadow: 4px 4px 0 #16110F; animation: ribbon-runner 4.6s ease-in-out infinite; }
@@ -244,20 +249,24 @@ const timelineItems = [
 @keyframes chip-drift { 0%, 100% { translate: 0 0; } 50% { translate: 8px -7px; } }
 @keyframes guide-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes guide-mascot-bounce { 0%, 100% { transform: translateY(0) rotate(-2deg) scale(1); } 50% { transform: translateY(-14px) rotate(2deg) scale(1.03); } }
+@keyframes scene-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes page-flow-a { 0% { transform: translate(0, 0) scale(0.8); opacity: 0; } 12% { opacity: 1; } 52% { transform: translate(44vw, 30vh) scale(1); } 100% { transform: translate(84vw, 16vh) scale(0.8); opacity: 0; } }
 @keyframes page-flow-b { 0% { transform: translate(0, 0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 54% { transform: translate(-36vw, 24vh) scale(1); } 100% { transform: translate(-78vw, 36vh) scale(0.8); opacity: 0; } }
 @keyframes page-flow-c { 0%, 100% { transform: translate(0, 0); opacity: 0.4; } 50% { transform: translate(18vw, -18vh); opacity: 1; } }
 @keyframes ribbon-runner { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-54vw); } }
 @keyframes timeline-runner { 0% { top: 28px; } 100% { top: calc(100% - 52px); } }
 @media (prefers-reduced-motion: reduce) {
-  .party-bg::before, .hero-guide, .timeline-card, .qr-card, .flow-node, .story-ribbon::after, .timeline-board::after, .brand-lockup img, .topic-guide-mascot, .mini-character { animation: none; }
+  .party-bg::before, .hero-guide, .tour-scene, .tour-scene::before, .timeline-card, .qr-card, .flow-node, .story-ribbon::after, .timeline-board::after, .brand-lockup img, .topic-guide-person, .guide-host img, .mini-character { animation: none; }
   .comic-button { transition: none; }
 }
 @media (max-width: 980px) {
   .party-panel { min-height: auto; padding: 84px 0; }
-  .hero-grid, .comic-spread, .timeline-grid, .media-grid, .qr-grid { grid-template-columns: 1fr; }
+  .hero-grid, .comic-spread, .timeline-grid, .media-grid, .qr-grid, .guide-tour-grid { grid-template-columns: 1fr; }
   .media-card.video { grid-row: auto; }
   .hero-guide { transform: none; }
+  .guide-host { position: relative; top: auto; min-height: auto; }
+  .guide-host img { width: min(92vw, 520px); margin-left: 0; }
+  .tour-scene { min-height: auto; }
   .burst-card { position: static; max-width: none; margin-top: 12px; }
   .timeline-board::before { left: 30px; }
   .timeline-board::after { left: 22px; }
@@ -280,6 +289,10 @@ const timelineItems = [
   .topic-guide-bubble::after { display: none; }
   .topic-guide-route { grid-template-columns: 1fr 1fr; }
   .memory-preview { display: none; }
+  .scene-body { grid-template-columns: 1fr; }
+  .guide-tour { padding: 72px 0; }
+  .tour-scene { padding: 26px; }
+  .scene-step { top: 18px; right: 18px; font-size: 62px; }
   .media-person { position: static; margin-top: 18px; }
   .mini-flow { grid-template-columns: 1fr; }
   .qr-card { box-shadow: 8px 8px 0 #16110F; }
