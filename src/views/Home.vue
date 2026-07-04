@@ -1,30 +1,18 @@
 <template>
   <div class="home">
     <section class="party-recorder-spotlight">
-      <div class="party-flow-track" aria-hidden="true">
-        <i class="flow-orb orb-one"></i>
-        <i class="flow-orb orb-two"></i>
-      </div>
-      <div class="container party-recorder-grid">
-        <div class="party-recorder-copy fade-in">
-          <div class="party-brand-lock">
-            <img src="/party-recorder/app-icon.png" alt="聚会记录大师 Logo" />
-            <span class="party-recorder-kicker">小程序专题</span>
+      <router-link to="/topics/party-recorder" class="party-recorder-banner" aria-label="打开聚会记录大师专题页">
+        <div class="container party-recorder-grid">
+          <div class="party-recorder-copy fade-in">
+            <img class="party-recorder-logo-mark" src="/party-recorder/app-icon.png" alt="聚会记录大师 Logo" />
+            <h2>聚会记录大师</h2>
+            <p>把开局、照片视频、账本和时间线整理成一张会分享的聚会回忆。</p>
           </div>
-          <h2>聚会记录大师，把一场聚会变成会动的漫画回忆</h2>
-          <p>创建聚会、拍照视频、账本事件和时间线回忆都收进同一条故事线，结束后生成带小程序二维码的分享图。</p>
-          <router-link to="/topics/party-recorder" class="party-recorder-link">打开全屏漫画专题</router-link>
+          <div class="party-character-wrap fade-in">
+            <img class="party-character" src="/party-recorder/hero-character-phone.png" alt="卡通记录官拿着手机展示聚会记录大师小程序" />
+          </div>
         </div>
-        <router-link to="/topics/party-recorder" class="party-recorder-panel fade-in" aria-label="打开聚会记录大师专题页">
-          <img class="party-recorder-scene" src="/party-recorder/comic-camera.png" alt="聚会记录大师拍照记录漫画插画" />
-          <img class="party-recorder-logo" src="/party-recorder/app-icon.png" alt="聚会记录大师卡通人物 Logo" />
-          <i class="character-chip chip-host">记录官</i>
-          <i class="character-chip chip-camera">拍照手</i>
-          <i class="character-chip chip-vibe">气氛组</i>
-          <strong>记录今晚</strong>
-          <em>照片 / 视频 / 时间线 / 分享图</em>
-        </router-link>
-      </div>
+      </router-link>
     </section>
 
     <section class="hero">
@@ -378,32 +366,15 @@ onUnmounted(() => {
 .logo-strip span { color: var(--text-secondary); font-size: 14px; font-weight: 700; }
 .logo-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; align-items: center; }
 .logo-row b { color: #64748B; font-size: 18px; font-weight: 800; text-align: center; }
-.party-recorder-spotlight { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 88px 0; color: #16110F; background: linear-gradient(135deg, #FFF24D 0%, #FF8F3D 48%, #12D0FF 100%); overflow: hidden; }
-.party-recorder-spotlight::before { content: ""; position: absolute; inset: -20%; opacity: 0.18; background-image: radial-gradient(#16110F 2px, transparent 2px); background-size: 20px 20px; transform: rotate(-8deg); }
-.party-flow-track { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.party-flow-track::before { content: ""; position: absolute; left: 8%; top: 57%; width: 82%; height: 32%; border-top: 7px solid rgba(22, 17, 15, 0.55); border-right: 7px solid rgba(22, 17, 15, 0.35); border-radius: 52% 48% 0 0; transform: rotate(-8deg); }
-.party-flow-track::after { content: ""; position: absolute; left: 13%; top: 20%; width: 54%; height: 26%; border-bottom: 6px solid rgba(255, 255, 255, 0.72); border-left: 6px solid rgba(255, 255, 255, 0.55); border-radius: 0 0 0 52%; transform: rotate(10deg); }
-.flow-orb { position: absolute; z-index: 1; width: 18px; height: 18px; border: 3px solid #16110F; border-radius: 50%; background: #EF3340; box-shadow: 4px 4px 0 #16110F; }
-.orb-one { left: 10%; top: 61%; animation: home-flow-one 5.4s linear infinite; }
-.orb-two { right: 14%; top: 28%; background: #52E2FF; animation: home-flow-two 6.2s linear infinite; }
-.party-recorder-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 54px; align-items: center; }
-.party-brand-lock { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-.party-brand-lock img { width: 68px; height: 68px; border: 3px solid #16110F; border-radius: 18px; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; animation: character-bob 4s ease-in-out infinite; }
-.party-recorder-kicker { display: inline-flex; padding: 8px 14px; border: 3px solid #16110F; border-radius: 8px; color: #16110F; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; font-size: 13px; font-weight: 900; }
-.party-recorder-copy h2 { max-width: 620px; margin: 0 0 18px; font-size: clamp(36px, 5.6vw, 76px); line-height: 1.02; font-weight: 950; letter-spacing: 0; text-shadow: 5px 5px 0 #FFFFFF; }
-.party-recorder-copy p { max-width: 610px; margin: 0 0 30px; color: #3F352F; font-size: 18px; line-height: 1.8; font-weight: 700; }
-.party-recorder-link { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 28px; border: 3px solid #16110F; border-radius: 8px; color: #FFFFFF; background: #EF3340; box-shadow: 6px 6px 0 #16110F; font-size: 15px; font-weight: 900; transition: transform var(--transition), box-shadow var(--transition); }
-.party-recorder-link:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #16110F; }
-.party-recorder-panel { position: relative; display: block; padding: 18px; border: 4px solid #16110F; border-radius: 16px; color: #16110F; background: #FFFFFF; box-shadow: 12px 12px 0 #16110F; transform: rotate(1.5deg); transition: transform var(--transition), box-shadow var(--transition); animation: party-card-float 5.2s ease-in-out infinite; }
-.party-recorder-panel:hover { transform: rotate(-0.5deg) translateY(-6px); box-shadow: 16px 16px 0 #16110F; }
-.party-recorder-scene { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 3px solid #16110F; border-radius: 10px; }
-.party-recorder-logo { position: absolute; right: 26px; bottom: 24px; width: 108px; height: 108px; border: 4px solid #16110F; border-radius: 26px; background: #FFFFFF; box-shadow: 7px 7px 0 #16110F; animation: character-bob 3.6s ease-in-out infinite; }
-.character-chip { position: absolute; display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 14px; border: 3px solid #16110F; border-radius: 999px; color: #16110F; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; font-style: normal; font-weight: 950; animation: chip-drift 4.4s ease-in-out infinite; }
-.chip-host { left: 34px; top: 42px; background: #FFB0D7; }
-.chip-camera { left: 40%; top: -20px; background: #CCFF1A; animation-delay: 0.4s; }
-.chip-vibe { right: 32px; top: 44%; background: #52E2FF; animation-delay: 0.8s; }
-.party-recorder-panel strong { position: absolute; left: -20px; bottom: 34px; max-width: 220px; padding: 12px 16px; border: 3px solid #16110F; border-radius: 8px; background: #FFEF5A; box-shadow: 6px 6px 0 #16110F; font-size: 28px; font-weight: 950; }
-.party-recorder-panel em { position: absolute; right: -18px; top: 30px; max-width: 260px; padding: 12px 16px; border: 3px solid #16110F; border-radius: 8px; background: #52E2FF; box-shadow: 6px 6px 0 #16110F; font-style: normal; font-weight: 900; }
+.party-recorder-spotlight { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 82px 0 74px; color: #16110F; background: linear-gradient(135deg, #FFF24D 0%, #FF8F3D 48%, #12D0FF 100%); overflow: hidden; }
+.party-recorder-spotlight::before { content: ""; position: absolute; inset: -18%; opacity: 0.12; background-image: radial-gradient(#16110F 2px, transparent 2px); background-size: 22px 22px; transform: rotate(-8deg); }
+.party-recorder-banner { position: relative; z-index: 1; display: block; width: 100%; color: inherit; }
+.party-recorder-grid { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 42px; align-items: center; }
+.party-recorder-logo-mark { display: block; width: 108px; height: 108px; margin-bottom: 22px; border: 4px solid #16110F; border-radius: 26px; background: #FFFFFF; box-shadow: 8px 8px 0 #16110F; }
+.party-recorder-copy h2 { max-width: 620px; margin: 0 0 18px; font-size: clamp(42px, 7vw, 92px); line-height: 0.98; font-weight: 950; letter-spacing: 0; text-shadow: 6px 6px 0 #FFFFFF; }
+.party-recorder-copy p { max-width: 560px; margin: 0; color: #3F352F; font-size: 20px; line-height: 1.72; font-weight: 800; }
+.party-character-wrap { display: flex; align-items: center; justify-content: center; }
+.party-character { display: block; width: min(100%, 780px); max-height: 76svh; object-fit: contain; filter: drop-shadow(14px 16px 0 rgba(22, 17, 15, 0.22)); transform: rotate(1deg); animation: party-card-float 5.2s ease-in-out infinite; }
 .topic-strip { padding: 18px 0; background: #F8FAFC; border-bottom: 1px solid var(--border); }
 .topic-card { min-height: 104px; display: grid; grid-template-columns: 150px 1fr auto; gap: 18px; align-items: center; padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: #FFFFFF; transition: border-color var(--transition), transform var(--transition); }
 .topic-card:hover { border-color: #0B63F6; transform: translateY(-1px); }
@@ -465,10 +436,6 @@ onUnmounted(() => {
 @keyframes hero-scan-b { 0%, 100% { transform: translateX(0) rotate(14deg); opacity: 0; } 20%, 74% { opacity: 0.9; } 56% { transform: translateX(-210%) rotate(14deg); } }
 @keyframes service-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes party-card-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
-@keyframes character-bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
-@keyframes chip-drift { 0%, 100% { translate: 0 0; } 50% { translate: 8px -7px; } }
-@keyframes home-flow-one { 0% { transform: translate(0, 0) scale(0.8); opacity: 0; } 12% { opacity: 1; } 48% { transform: translate(46vw, -10vh) scale(1); } 88% { opacity: 1; } 100% { transform: translate(78vw, 4vh) scale(0.8); opacity: 0; } }
-@keyframes home-flow-two { 0% { transform: translate(0, 0) scale(0.7); opacity: 0; } 16% { opacity: 1; } 55% { transform: translate(-34vw, 18vh) scale(1); } 100% { transform: translate(-74vw, 28vh) scale(0.7); opacity: 0; } }
 .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 @media (max-width: 980px) {
@@ -482,9 +449,8 @@ onUnmounted(() => {
   .logo-strip .container, .logo-row { grid-template-columns: 1fr; }
   .logo-row b { text-align: left; }
   .section-copy { position: static; }
-  .party-recorder-panel { transform: none; }
-  .party-recorder-logo { width: 86px; height: 86px; }
-  .character-chip { position: static; display: inline-flex; margin: 12px 8px 0 0; }
+  .party-recorder-grid { grid-template-columns: 1fr; }
+  .party-character { max-height: none; }
 }
 @media (max-width: 768px) {
   .hero-copy h1 { font-size: 34px; }
@@ -493,13 +459,10 @@ onUnmounted(() => {
   .service-bar { margin-top: 52px; }
   .hero-live-panel { max-width: none; }
   .party-recorder-spotlight { min-height: auto; padding: 70px 0; }
-  .party-recorder-copy h2 { font-size: 36px; }
-  .party-recorder-copy p { font-size: 15px; }
-  .party-recorder-link { width: 100%; }
-  .party-brand-lock { align-items: flex-start; flex-direction: column; }
-  .party-flow-track::before, .party-flow-track::after { opacity: 0.42; }
-  .party-recorder-logo { right: 24px; bottom: 118px; width: 72px; height: 72px; }
-  .party-recorder-panel strong, .party-recorder-panel em { position: static; display: block; max-width: none; margin-top: 12px; }
+  .party-recorder-logo-mark { width: 82px; height: 82px; border-radius: 20px; }
+  .party-recorder-copy h2 { font-size: 44px; }
+  .party-recorder-copy p { font-size: 16px; }
+  .party-character { width: 112%; max-width: none; margin-left: -6%; }
   .topic-card { grid-template-columns: 1fr; }
   .topic-card img { width: 100%; height: 140px; }
   .section { padding: 64px 0; }
