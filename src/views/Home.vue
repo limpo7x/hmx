@@ -9,7 +9,7 @@
             <p>把开局、照片视频、账本和时间线整理成一张会分享的聚会回忆。</p>
           </div>
           <div class="party-character-wrap fade-in">
-            <img class="party-character" src="/party-recorder/hero-character-phone.png" alt="卡通记录官拿着手机展示聚会记录大师小程序" />
+            <img class="party-character" src="/party-recorder/hero-character-phone-transparent.png" alt="卡通记录官拿着手机展示聚会记录大师小程序" />
           </div>
         </div>
       </router-link>
@@ -368,13 +368,13 @@ onUnmounted(() => {
 .logo-row b { color: #64748B; font-size: 18px; font-weight: 800; text-align: center; }
 .party-recorder-spotlight { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 82px 0 74px; color: #16110F; background: linear-gradient(135deg, #FFF24D 0%, #FF8F3D 48%, #12D0FF 100%); overflow: hidden; }
 .party-recorder-spotlight::before { content: ""; position: absolute; inset: -18%; opacity: 0.12; background-image: radial-gradient(#16110F 2px, transparent 2px); background-size: 22px 22px; transform: rotate(-8deg); }
-.party-recorder-banner { position: relative; z-index: 1; display: block; width: 100%; color: inherit; }
+.party-recorder-banner { position: relative; z-index: 1; display: block; width: 100%; color: inherit; overflow: visible; }
 .party-recorder-grid { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 42px; align-items: center; }
 .party-recorder-logo-mark { display: block; width: 108px; height: 108px; margin-bottom: 22px; border: 4px solid #16110F; border-radius: 26px; background: #FFFFFF; box-shadow: 8px 8px 0 #16110F; }
 .party-recorder-copy h2 { max-width: 620px; margin: 0 0 18px; font-size: clamp(42px, 7vw, 92px); line-height: 0.98; font-weight: 950; letter-spacing: 0; text-shadow: 6px 6px 0 #FFFFFF; }
 .party-recorder-copy p { max-width: 560px; margin: 0; color: #3F352F; font-size: 20px; line-height: 1.72; font-weight: 800; }
-.party-character-wrap { display: flex; align-items: center; justify-content: center; }
-.party-character { display: block; width: min(100%, 780px); max-height: 76svh; object-fit: contain; filter: drop-shadow(14px 16px 0 rgba(22, 17, 15, 0.22)); transform: rotate(1deg); animation: party-card-float 5.2s ease-in-out infinite; }
+.party-character-wrap { display: flex; align-items: center; justify-content: flex-end; min-width: 0; margin-right: -15vw; overflow: visible; }
+.party-character { display: block; width: min(72vw, 1060px); max-width: none; max-height: 88svh; object-fit: contain; filter: drop-shadow(14px 16px 0 rgba(22, 17, 15, 0.22)); transform: translateX(5vw) rotate(1deg) scale(1.08); transform-origin: center right; animation: party-card-float 5.2s ease-in-out infinite; }
 .topic-strip { padding: 18px 0; background: #F8FAFC; border-bottom: 1px solid var(--border); }
 .topic-card { min-height: 104px; display: grid; grid-template-columns: 150px 1fr auto; gap: 18px; align-items: center; padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: #FFFFFF; transition: border-color var(--transition), transform var(--transition); }
 .topic-card:hover { border-color: #0B63F6; transform: translateY(-1px); }
@@ -450,6 +450,7 @@ onUnmounted(() => {
   .logo-row b { text-align: left; }
   .section-copy { position: static; }
   .party-recorder-grid { grid-template-columns: 1fr; }
+  .party-character-wrap { justify-content: center; margin-right: -8vw; }
   .party-character { max-height: none; }
 }
 @media (max-width: 768px) {
@@ -462,7 +463,8 @@ onUnmounted(() => {
   .party-recorder-logo-mark { width: 82px; height: 82px; border-radius: 20px; }
   .party-recorder-copy h2 { font-size: 44px; }
   .party-recorder-copy p { font-size: 16px; }
-  .party-character { width: 112%; max-width: none; margin-left: -6%; }
+  .party-character-wrap { margin-right: -18vw; }
+  .party-character { width: 140%; max-width: none; margin-left: -18%; transform: translateX(6vw) rotate(1deg) scale(1.06); }
   .topic-card { grid-template-columns: 1fr; }
   .topic-card img { width: 100%; height: 140px; }
   .section { padding: 64px 0; }
