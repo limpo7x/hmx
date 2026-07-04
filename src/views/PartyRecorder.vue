@@ -2,9 +2,17 @@
   <main class="party-page">
     <section class="party-hero party-panel">
       <div class="party-bg" aria-hidden="true"></div>
+      <div class="page-flow" aria-hidden="true">
+        <i class="flow-node node-a"></i>
+        <i class="flow-node node-b"></i>
+        <i class="flow-node node-c"></i>
+      </div>
       <div class="party-shell hero-grid">
         <div class="hero-copy">
-          <span class="comic-label">微信小程序专题</span>
+          <div class="brand-lockup">
+            <img src="/party-recorder/app-icon.png" alt="聚会记录大师 Logo" />
+            <span class="comic-label">微信小程序专题</span>
+          </div>
           <h1>聚会记录大师</h1>
           <p>从开局、拍照、视频、账本到时间线回忆，把一场聚会整理成可以保存和分享的漫画长卷。</p>
           <div class="hero-actions">
@@ -15,6 +23,12 @@
 
         <div class="hero-comic" aria-label="聚会记录大师漫画预览">
           <img src="/party-recorder/party-hero.png" alt="朋友聚会举杯场景" />
+          <img class="hero-logo-sticker" src="/party-recorder/app-icon.png" alt="聚会记录大师卡通人物 Logo" />
+          <div class="hero-crew">
+            <i>主持记录</i>
+            <i>拍照上传</i>
+            <i>视频留念</i>
+          </div>
           <div class="burst-card primary">咔嚓！第一张照片进时间线</div>
           <div class="burst-card secondary">视频、账本、成员动态一起保存</div>
         </div>
@@ -22,6 +36,7 @@
     </section>
 
     <section class="party-panel feature-panel">
+      <div class="story-ribbon" aria-hidden="true"></div>
       <div class="party-shell comic-spread">
         <article class="comic-frame large">
           <span class="frame-index">01</span>
@@ -36,6 +51,7 @@
 
         <article class="comic-frame camera-frame">
           <img src="/party-recorder/comic-camera.png" alt="聚会拍照记录插画" />
+          <i class="mini-character">摄影手</i>
           <strong>拍照即记录</strong>
           <p>现场照片进入本局相册，也能成为分享图素材。</p>
         </article>
@@ -44,6 +60,11 @@
           <span class="frame-index">02</span>
           <h3>每个成员都能加入</h3>
           <p>好友通过邀请进入同一场聚会，查看记录、相册、账本和分享内容。</p>
+          <div class="crew-stack" aria-hidden="true">
+            <b>记</b>
+            <b>拍</b>
+            <b>玩</b>
+          </div>
         </article>
       </div>
     </section>
@@ -72,18 +93,21 @@
           <span>VIDEO</span>
           <h2>视频图文一起收进相册</h2>
           <p>支持照片与视频节点，适合记录开场、互动、祝福、精彩瞬间和聚会结尾。</p>
+          <i class="media-person">视频记录员</i>
         </article>
 
         <article class="media-card album">
           <span>ALBUM</span>
           <h2>从现场素材生成分享图</h2>
           <p>分享预览基于真实照片、账本和时间线生成，底部附小程序二维码，方便好友回流。</p>
+          <i class="media-person">相册整理员</i>
         </article>
 
         <article class="media-card ledger">
           <span>LEDGER</span>
           <h2>账本事件也进入回忆</h2>
           <p>聚会账本不再是孤立工具，变动会写入时间线，成为聚会过程的一部分。</p>
+          <i class="media-person">账本监督员</i>
         </article>
       </div>
     </section>
@@ -98,9 +122,10 @@
         </div>
 
         <div class="qr-card">
-          <img src="/party-recorder/miniapp-code.png" alt="聚会记录大师小程序二维码" />
+          <img class="qr-logo" src="/party-recorder/app-icon.png" alt="聚会记录大师 Logo" />
+          <img class="qr-image" src="/party-recorder/miniapp-code.jpg" alt="聚会记录大师小程序二维码" />
           <strong>微信扫码体验</strong>
-          <span>二维码来源于聚会记录师项目真实小程序码素材</span>
+          <span>扫描进入聚会记录小程序</span>
         </div>
       </div>
     </section>
@@ -123,8 +148,17 @@ const timelineItems = [
 .party-panel { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 94px 0; overflow: hidden; }
 .party-bg { position: absolute; inset: 0; background: radial-gradient(circle at 12% 18%, rgba(255, 71, 87, 0.24), transparent 24%), radial-gradient(circle at 82% 10%, rgba(0, 201, 255, 0.28), transparent 26%), linear-gradient(135deg, #FFF24D 0%, #FF8F3D 45%, #12D0FF 100%); }
 .party-bg::before { content: ""; position: absolute; inset: 0; opacity: 0.24; background-image: linear-gradient(135deg, #111 12%, transparent 12%, transparent 50%, #111 50%, #111 62%, transparent 62%); background-size: 18px 18px; mix-blend-mode: multiply; animation: comic-stripes 18s linear infinite; }
+.page-flow { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.page-flow::before { content: ""; position: absolute; left: 6%; top: 24%; width: 88%; height: 54%; border-top: 7px solid rgba(22, 17, 15, 0.52); border-right: 7px solid rgba(22, 17, 15, 0.36); border-bottom: 7px solid rgba(255, 255, 255, 0.72); border-radius: 54% 46% 52% 48%; transform: rotate(-7deg); }
+.flow-node { position: absolute; width: 18px; height: 18px; border: 3px solid #16110F; border-radius: 50%; background: #EF3340; box-shadow: 4px 4px 0 #16110F; }
+.node-a { left: 8%; top: 32%; animation: page-flow-a 5.5s linear infinite; }
+.node-b { right: 16%; top: 28%; background: #52E2FF; animation: page-flow-b 6.4s linear infinite; }
+.node-c { left: 42%; bottom: 18%; background: #CCFF1A; animation: page-flow-c 7s linear infinite; }
 .hero-grid { position: relative; display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 48px; align-items: center; }
+.brand-lockup { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.brand-lockup img { width: 72px; height: 72px; border: 3px solid #16110F; border-radius: 20px; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; animation: character-bob 4s ease-in-out infinite; }
 .comic-label { display: inline-flex; width: fit-content; margin-bottom: 18px; padding: 8px 14px; border: 3px solid #16110F; border-radius: 8px; color: #16110F; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; font-size: 14px; font-weight: 900; }
+.brand-lockup .comic-label { margin-bottom: 0; }
 .hero-copy h1 { margin: 0 0 22px; font-size: clamp(54px, 8vw, 116px); line-height: 0.95; font-weight: 950; letter-spacing: 0; text-shadow: 6px 6px 0 #FFFFFF, 10px 10px 0 rgba(22, 17, 15, 0.18); }
 .hero-copy p, .timeline-copy p, .qr-copy p { max-width: 650px; margin: 0 0 30px; color: #3F352F; font-size: 20px; line-height: 1.75; font-weight: 700; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
@@ -134,10 +168,18 @@ const timelineItems = [
 .comic-button.dark { color: #FFFFFF; background: #16110F; box-shadow: 6px 6px 0 #FFCC33; }
 .hero-comic { position: relative; padding: 18px; border: 4px solid #16110F; border-radius: 16px; background: #FFFFFF; box-shadow: 12px 12px 0 #16110F; transform: rotate(1.5deg); animation: comic-float 5.2s ease-in-out infinite; }
 .hero-comic img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 3px solid #16110F; border-radius: 10px; }
+.hero-comic .hero-logo-sticker { position: absolute; right: 26px; bottom: 24px; width: 112px; height: 112px; aspect-ratio: auto; border: 4px solid #16110F; border-radius: 26px; background: #FFFFFF; box-shadow: 7px 7px 0 #16110F; animation: character-bob 3.8s ease-in-out infinite; }
+.hero-crew { position: absolute; left: 22px; top: 22px; display: flex; flex-wrap: wrap; gap: 10px; max-width: 360px; }
+.hero-crew i, .mini-character, .media-person { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 13px; border: 3px solid #16110F; border-radius: 999px; color: #16110F; background: #FFFFFF; box-shadow: 4px 4px 0 #16110F; font-style: normal; font-weight: 950; }
+.hero-crew i:nth-child(1) { background: #FFB0D7; }
+.hero-crew i:nth-child(2) { background: #CCFF1A; }
+.hero-crew i:nth-child(3) { background: #52E2FF; }
 .burst-card { position: absolute; max-width: 260px; padding: 14px 16px; border: 3px solid #16110F; border-radius: 8px; background: #FFFFFF; box-shadow: 6px 6px 0 #16110F; font-size: 16px; font-weight: 900; }
 .burst-card.primary { left: -22px; bottom: 26px; background: #FFEF5A; }
 .burst-card.secondary { right: -18px; top: 26px; background: #52E2FF; }
 .feature-panel { background: #FFF9D7; }
+.story-ribbon { position: absolute; left: 5%; right: 5%; top: 50%; height: 34%; border-top: 7px solid rgba(239, 51, 64, 0.55); border-radius: 50% 50% 0 0; transform: rotate(4deg); pointer-events: none; }
+.story-ribbon::after { content: ""; position: absolute; right: 14%; top: -14px; width: 22px; height: 22px; border: 3px solid #16110F; border-radius: 50%; background: #EF3340; box-shadow: 4px 4px 0 #16110F; animation: ribbon-runner 4.6s ease-in-out infinite; }
 .comic-spread { display: grid; grid-template-columns: 1.25fr 0.9fr 0.85fr; gap: 24px; align-items: stretch; }
 .comic-frame { position: relative; min-height: 320px; padding: 30px; border: 4px solid #16110F; border-radius: 14px; background: #FFFFFF; box-shadow: 10px 10px 0 #16110F; overflow: hidden; }
 .comic-frame.large { min-height: 520px; background: #FF6B4A; color: #FFFFFF; }
@@ -148,13 +190,19 @@ const timelineItems = [
 .comic-frame p, .media-card p { margin: 0; color: #4C4038; font-size: 17px; line-height: 1.75; font-weight: 700; }
 .camera-frame { display: flex; flex-direction: column; justify-content: end; background: #CCFF1A; }
 .camera-frame img { position: absolute; inset: 0; width: 100%; height: 62%; object-fit: cover; border-bottom: 4px solid #16110F; }
+.mini-character { position: absolute; right: 18px; top: 18px; background: #FFB0D7; animation: chip-drift 4s ease-in-out infinite; }
 .camera-frame strong { margin-top: auto; font-size: 30px; font-weight: 950; }
 .mini-flow { position: absolute; left: 30px; right: 30px; bottom: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .mini-flow b { display: flex; align-items: center; justify-content: center; min-height: 58px; border: 3px solid #16110F; border-radius: 8px; color: #16110F; background: #FFFFFF; box-shadow: 4px 4px 0 #16110F; font-size: 18px; }
+.crew-stack { position: absolute; left: 28px; right: 28px; bottom: 28px; display: flex; gap: 12px; }
+.crew-stack b { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: 3px solid #16110F; border-radius: 50%; color: #16110F; background: #52E2FF; box-shadow: 4px 4px 0 #16110F; font-size: 22px; }
+.crew-stack b:nth-child(2) { background: #FFB0D7; }
+.crew-stack b:nth-child(3) { background: #CCFF1A; }
 .timeline-panel { background: #17C8FF; }
 .timeline-grid { display: grid; grid-template-columns: 0.86fr 1.14fr; gap: 54px; align-items: center; }
 .timeline-board { position: relative; display: grid; gap: 16px; }
 .timeline-board::before { content: ""; position: absolute; top: 28px; bottom: 28px; left: 88px; width: 7px; border-radius: 99px; background: #16110F; }
+.timeline-board::after { content: ""; position: absolute; left: 80px; top: 28px; width: 23px; height: 23px; border: 3px solid #16110F; border-radius: 50%; background: #EF3340; box-shadow: 4px 4px 0 #16110F; animation: timeline-runner 5.2s ease-in-out infinite; }
 .timeline-card { position: relative; display: grid; grid-template-columns: 120px 1fr; gap: 12px 20px; align-items: center; min-height: 104px; padding: 18px 22px; border: 4px solid #16110F; border-radius: 14px; background: #FFFFFF; box-shadow: 8px 8px 0 #16110F; animation: timeline-pop 3.4s ease-in-out infinite; }
 .timeline-card:nth-child(2n) { transform: translateX(28px); background: #FFF24D; animation-delay: 0.35s; }
 .timeline-card:nth-child(3n) { background: #FFB0D7; animation-delay: 0.7s; }
@@ -164,23 +212,36 @@ const timelineItems = [
 .media-panel { background: #16110F; color: #FFFFFF; }
 .media-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; grid-template-rows: 1fr 1fr; gap: 24px; }
 .media-card { min-height: 280px; padding: 32px; border: 4px solid #FFFFFF; border-radius: 14px; box-shadow: 10px 10px 0 #FFCC33; overflow: hidden; }
+.media-card { position: relative; }
 .media-card span { display: block; margin-bottom: 28px; color: #16110F; font-size: 13px; font-weight: 950; }
 .media-card p { color: rgba(22, 17, 15, 0.82); }
 .media-card.video { grid-row: span 2; color: #16110F; background: linear-gradient(135deg, #52E2FF 0%, #FFF24D 100%); }
 .media-card.album { color: #16110F; background: #FFB0D7; }
 .media-card.ledger { color: #16110F; background: #FFFFFF; }
+.media-person { position: absolute; right: 24px; bottom: 24px; background: #FFFFFF; }
+.media-card.video .media-person { background: #FFB0D7; }
+.media-card.album .media-person { background: #CCFF1A; }
+.media-card.ledger .media-person { background: #52E2FF; }
 .qr-panel { background: #FFF24D; }
 .qr-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 54px; align-items: center; }
 .qr-card { justify-self: center; width: min(460px, 100%); padding: 24px; border: 5px solid #16110F; border-radius: 18px; background: #FFFFFF; box-shadow: 14px 14px 0 #16110F; text-align: center; animation: qr-pulse 3.6s ease-in-out infinite; }
-.qr-card img { display: block; width: 100%; margin-bottom: 18px; border: 3px solid #16110F; border-radius: 10px; }
+.qr-logo { display: block; width: 92px; height: 92px; margin: -64px auto 16px; border: 4px solid #16110F; border-radius: 24px; background: #FFFFFF; box-shadow: 6px 6px 0 #16110F; }
+.qr-image { display: block; width: 100%; margin-bottom: 18px; border: 3px solid #16110F; border-radius: 10px; }
 .qr-card strong { display: block; margin-bottom: 8px; color: #16110F; font-size: 28px; font-weight: 950; }
 .qr-card span { color: #5C514C; font-size: 14px; font-weight: 800; }
 @keyframes comic-stripes { from { background-position: 0 0; } to { background-position: 160px 160px; } }
 @keyframes comic-float { 0%, 100% { transform: rotate(1.5deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-14px); } }
 @keyframes timeline-pop { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 @keyframes qr-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@keyframes character-bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
+@keyframes chip-drift { 0%, 100% { translate: 0 0; } 50% { translate: 8px -7px; } }
+@keyframes page-flow-a { 0% { transform: translate(0, 0) scale(0.8); opacity: 0; } 12% { opacity: 1; } 52% { transform: translate(44vw, 30vh) scale(1); } 100% { transform: translate(84vw, 16vh) scale(0.8); opacity: 0; } }
+@keyframes page-flow-b { 0% { transform: translate(0, 0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 54% { transform: translate(-36vw, 24vh) scale(1); } 100% { transform: translate(-78vw, 36vh) scale(0.8); opacity: 0; } }
+@keyframes page-flow-c { 0%, 100% { transform: translate(0, 0); opacity: 0.4; } 50% { transform: translate(18vw, -18vh); opacity: 1; } }
+@keyframes ribbon-runner { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-54vw); } }
+@keyframes timeline-runner { 0% { top: 28px; } 100% { top: calc(100% - 52px); } }
 @media (prefers-reduced-motion: reduce) {
-  .party-bg::before, .hero-comic, .timeline-card, .qr-card { animation: none; }
+  .party-bg::before, .hero-comic, .timeline-card, .qr-card, .flow-node, .story-ribbon::after, .timeline-board::after, .brand-lockup img, .hero-logo-sticker, .mini-character { animation: none; }
   .comic-button { transition: none; }
 }
 @media (max-width: 980px) {
@@ -190,18 +251,23 @@ const timelineItems = [
   .hero-comic { transform: none; }
   .burst-card { position: static; max-width: none; margin-top: 12px; }
   .timeline-board::before { left: 30px; }
+  .timeline-board::after { left: 22px; }
   .timeline-card, .timeline-card:nth-child(2n) { transform: none; grid-template-columns: 1fr; padding-left: 54px; }
   .timeline-card span { grid-column: auto; }
 }
 @media (max-width: 640px) {
   .party-shell { width: min(100% - 28px, 1180px); }
   .party-panel { padding: 72px 0; }
+  .brand-lockup { align-items: flex-start; flex-direction: column; }
   .hero-copy h1 { font-size: 52px; }
   .hero-copy p, .timeline-copy p, .qr-copy p { font-size: 17px; }
   .comic-button { width: 100%; }
   .comic-frame, .media-card { min-height: auto; padding: 24px; }
   .comic-frame.large { min-height: 480px; }
   .camera-frame { min-height: 360px; }
+  .hero-comic .hero-logo-sticker { width: 74px; height: 74px; right: 18px; bottom: 110px; }
+  .hero-crew { position: static; margin-top: 12px; }
+  .media-person { position: static; margin-top: 18px; }
   .mini-flow { grid-template-columns: 1fr; }
   .qr-card { box-shadow: 8px 8px 0 #16110F; }
 }

@@ -27,14 +27,18 @@ const routes = [
     component: () => import("@/views/News.vue")
   },
   {
+    path: "/topics/party-recorder",
+    name: "PartyRecorderTopic",
+    component: () => import("@/views/PartyRecorder.vue")
+  },
+  {
     path: "/topics/:id",
     name: "TopicDetail",
     component: () => import("@/views/TopicDetail.vue")
   },
   {
     path: "/party-recorder",
-    name: "PartyRecorder",
-    component: () => import("@/views/PartyRecorder.vue")
+    redirect: "/topics/party-recorder"
   },
   {
     path: "/news/:id",
