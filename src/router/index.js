@@ -32,6 +32,11 @@ const routes = [
     component: () => import("@/views/TopicDetail.vue")
   },
   {
+    path: "/party-recorder",
+    name: "PartyRecorder",
+    component: () => import("@/views/PartyRecorder.vue")
+  },
+  {
     path: "/news/:id",
     name: "NewsDetail",
     component: () => import("@/views/NewsDetail.vue")

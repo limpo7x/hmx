@@ -1,5 +1,21 @@
 <template>
   <div class="home">
+    <section class="party-recorder-spotlight">
+      <div class="container party-recorder-grid">
+        <div class="party-recorder-copy fade-in">
+          <span>小程序专题</span>
+          <h2>聚会记录大师，把一场聚会变成会动的漫画回忆</h2>
+          <p>创建聚会、拍照视频、账本事件和时间线回忆都收进同一条故事线，结束后生成带小程序二维码的分享图。</p>
+          <router-link to="/party-recorder" class="party-recorder-link">打开全屏漫画专题</router-link>
+        </div>
+        <router-link to="/party-recorder" class="party-recorder-panel fade-in" aria-label="打开聚会记录大师专题页">
+          <img src="/party-recorder/comic-camera.png" alt="聚会记录大师拍照记录漫画插画" />
+          <strong>记录今晚</strong>
+          <em>照片 / 视频 / 时间线 / 分享图</em>
+        </router-link>
+      </div>
+    </section>
+
     <section class="hero">
       <img class="hero-image" :src="home.hero.image" :alt="home.hero.imageAlt" />
       <div class="hero-overlay"></div>
@@ -351,6 +367,18 @@ onUnmounted(() => {
 .logo-strip span { color: var(--text-secondary); font-size: 14px; font-weight: 700; }
 .logo-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; align-items: center; }
 .logo-row b { color: #64748B; font-size: 18px; font-weight: 800; text-align: center; }
+.party-recorder-spotlight { min-height: 100svh; display: flex; align-items: center; padding: 88px 0; color: #16110F; background: linear-gradient(135deg, #FFF24D 0%, #FF8F3D 48%, #12D0FF 100%); overflow: hidden; }
+.party-recorder-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 54px; align-items: center; }
+.party-recorder-copy span { display: inline-flex; margin-bottom: 18px; padding: 8px 14px; border: 3px solid #16110F; border-radius: 8px; color: #16110F; background: #FFFFFF; box-shadow: 5px 5px 0 #16110F; font-size: 13px; font-weight: 900; }
+.party-recorder-copy h2 { max-width: 620px; margin: 0 0 18px; font-size: clamp(36px, 5.6vw, 76px); line-height: 1.02; font-weight: 950; letter-spacing: 0; text-shadow: 5px 5px 0 #FFFFFF; }
+.party-recorder-copy p { max-width: 610px; margin: 0 0 30px; color: #3F352F; font-size: 18px; line-height: 1.8; font-weight: 700; }
+.party-recorder-link { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 28px; border: 3px solid #16110F; border-radius: 8px; color: #FFFFFF; background: #EF3340; box-shadow: 6px 6px 0 #16110F; font-size: 15px; font-weight: 900; transition: transform var(--transition), box-shadow var(--transition); }
+.party-recorder-link:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #16110F; }
+.party-recorder-panel { position: relative; display: block; padding: 18px; border: 4px solid #16110F; border-radius: 16px; color: #16110F; background: #FFFFFF; box-shadow: 12px 12px 0 #16110F; transform: rotate(1.5deg); transition: transform var(--transition), box-shadow var(--transition); animation: party-card-float 5.2s ease-in-out infinite; }
+.party-recorder-panel:hover { transform: rotate(-0.5deg) translateY(-6px); box-shadow: 16px 16px 0 #16110F; }
+.party-recorder-panel img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 3px solid #16110F; border-radius: 10px; }
+.party-recorder-panel strong { position: absolute; left: -20px; bottom: 34px; max-width: 220px; padding: 12px 16px; border: 3px solid #16110F; border-radius: 8px; background: #FFEF5A; box-shadow: 6px 6px 0 #16110F; font-size: 28px; font-weight: 950; }
+.party-recorder-panel em { position: absolute; right: -18px; top: 30px; max-width: 260px; padding: 12px 16px; border: 3px solid #16110F; border-radius: 8px; background: #52E2FF; box-shadow: 6px 6px 0 #16110F; font-style: normal; font-weight: 900; }
 .topic-strip { padding: 18px 0; background: #F8FAFC; border-bottom: 1px solid var(--border); }
 .topic-card { min-height: 104px; display: grid; grid-template-columns: 150px 1fr auto; gap: 18px; align-items: center; padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: #FFFFFF; transition: border-color var(--transition), transform var(--transition); }
 .topic-card:hover { border-color: #0B63F6; transform: translateY(-1px); }
@@ -411,6 +439,7 @@ onUnmounted(() => {
 @keyframes hero-scan-a { 0%, 100% { transform: translateX(0) rotate(-12deg); opacity: 0; } 18%, 70% { opacity: 1; } 52% { transform: translateX(210%) rotate(-12deg); } }
 @keyframes hero-scan-b { 0%, 100% { transform: translateX(0) rotate(14deg); opacity: 0; } 20%, 74% { opacity: 0.9; } 56% { transform: translateX(-210%) rotate(14deg); } }
 @keyframes service-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes party-card-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
 .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 @media (max-width: 980px) {
@@ -418,12 +447,13 @@ onUnmounted(() => {
   .hero-content { padding-top: 120px; }
   .hero-copy h1 { font-size: 42px; }
   .hero-live-panel { position: relative; top: auto; right: auto; width: 100%; max-width: 420px; margin-top: 32px; }
-  .service-bar, .proof-grid, .cap-grid, .news-grid, .split-section { grid-template-columns: 1fr; }
+  .service-bar, .proof-grid, .cap-grid, .news-grid, .split-section, .party-recorder-grid { grid-template-columns: 1fr; }
   .service-item { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
   .proof-item { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--border); }
   .logo-strip .container, .logo-row { grid-template-columns: 1fr; }
   .logo-row b { text-align: left; }
   .section-copy { position: static; }
+  .party-recorder-panel { transform: none; }
 }
 @media (max-width: 768px) {
   .hero-copy h1 { font-size: 34px; }
@@ -431,6 +461,11 @@ onUnmounted(() => {
   .hero-actions { flex-direction: column; align-items: stretch; }
   .service-bar { margin-top: 52px; }
   .hero-live-panel { max-width: none; }
+  .party-recorder-spotlight { min-height: auto; padding: 70px 0; }
+  .party-recorder-copy h2 { font-size: 36px; }
+  .party-recorder-copy p { font-size: 15px; }
+  .party-recorder-link { width: 100%; }
+  .party-recorder-panel strong, .party-recorder-panel em { position: static; display: block; max-width: none; margin-top: 12px; }
   .topic-card { grid-template-columns: 1fr; }
   .topic-card img { width: 100%; height: 140px; }
   .section { padding: 64px 0; }
